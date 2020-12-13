@@ -1,0 +1,38 @@
+﻿using Biblioteca.Core.Models.Books;
+using Biblioteca.Core.Repositories.Books;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Biblioteca.Data.Repositories.Books
+{
+    public class AuthorRepository : Repository<Author>, IAuthorRepository
+    {
+        private ApiDbContext ApiDbContext
+        {
+            get { return Context as ApiDbContext; }
+        }
+
+        public AuthorRepository(ApiDbContext context)
+            : base(context)
+        { }
+
+        public async Task<IEnumerable<Author>> GetAllWithBooksAsync()
+        {
+            return await ApiDbContext.Authors
+                .Include(a => a.Books)
+                .ToListAsync();
+        }
+
+        public Task<Author> GetWithBooksByIdAsync(int id)
+        {
+            return ApiDbContext.Authors
+                .Include(a => a.Books)
+                .SingleOrDefaultAsync(a => a.Id == id);
+        }
+
+      
+    }
+}
