@@ -1,11 +1,12 @@
 ﻿using Biblioteca.Core.Models;
+using Biblioteca.Core.Models.Checkouts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Biblioteca.Data.Configurations
+namespace Biblioteca.Data.Configurations.Checkouts
 {
     class CheckoutConfiguration : IEntityTypeConfiguration<Checkout>
     {
@@ -25,9 +26,9 @@ namespace Biblioteca.Data.Configurations
               .IsRequired();
 
             builder
-                     .HasOne(m => m.Client)
-                     .WithMany(a => a.Checkouts)
-                     .HasForeignKey(m => m.ClientId);
+               .HasOne(m => m.Client)
+               .WithMany(a => a.Checkouts)
+               .HasForeignKey(m => m.ClientId);
         }
     }
 }

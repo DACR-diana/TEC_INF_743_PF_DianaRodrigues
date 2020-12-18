@@ -9,6 +9,6 @@ namespace Biblioteca.Core.Services.Books
     public interface ICategoryService
     {
         Task<IEnumerable<Category>> GetAllWithBooks();
-        Task<Category> GetWithBooksById(int id);
+        Task<IEnumerable<Category>> GetWithBooksById(int id);
     }
 }

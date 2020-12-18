@@ -1,9 +1,11 @@
 ﻿using Biblioteca.Core;
 using Biblioteca.Core.Repositories;
 using Biblioteca.Core.Repositories.Books;
+using Biblioteca.Core.Repositories.Checkouts;
 using Biblioteca.Core.Repositories.Users;
 using Biblioteca.Data.Repositories;
 using Biblioteca.Data.Repositories.Books;
+using Biblioteca.Data.Repositories.Checkouts;
 using Biblioteca.Data.Repositories.Users;
 using System;
 using System.Collections.Generic;

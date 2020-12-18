@@ -1,5 +1,6 @@
 ﻿using Biblioteca.Core.Repositories;
 using Biblioteca.Core.Repositories.Books;
+using Biblioteca.Core.Repositories.Checkouts;
 using Biblioteca.Core.Repositories.Users;
 using System;
 using System.Collections.Generic;

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteca.Data.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20201213061935_InicialMigration")]
+    [Migration("20201218021846_InicialMigration")]
     partial class InicialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,12 +43,6 @@ namespace Biblioteca.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CheckoutId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CountryId")
                         .HasColumnType("int");
 
@@ -66,13 +60,39 @@ namespace Biblioteca.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CheckoutId");
-
                     b.HasIndex("CountryId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("Biblioteca.Core.Models.Books.BookAuthor", b =>
+                {
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookId", "AuthorId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("BookAuthors");
+                });
+
+            modelBuilder.Entity("Biblioteca.Core.Models.Books.BookCategory", b =>
+                {
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("BookCategories");
                 });
 
             modelBuilder.Entity("Biblioteca.Core.Models.Books.Category", b =>
@@ -90,7 +110,7 @@ namespace Biblioteca.Data.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Biblioteca.Core.Models.Checkout", b =>
+            modelBuilder.Entity("Biblioteca.Core.Models.Checkouts.Checkout", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,6 +134,21 @@ namespace Biblioteca.Data.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("Checkouts");
+                });
+
+            modelBuilder.Entity("Biblioteca.Core.Models.Checkouts.CheckoutBook", b =>
+                {
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CheckoutId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookId", "CheckoutId");
+
+                    b.HasIndex("CheckoutId");
+
+                    b.ToTable("CheckoutBooks");
                 });
 
             modelBuilder.Entity("Biblioteca.Core.Models.Country", b =>
@@ -240,45 +275,56 @@ namespace Biblioteca.Data.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("BookCategory", b =>
-                {
-                    b.Property<int>("BooksId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BooksId", "CategoryId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("BookCategory");
-                });
-
             modelBuilder.Entity("Biblioteca.Core.Models.Books.Book", b =>
                 {
-                    b.HasOne("Biblioteca.Core.Models.Books.Author", "Author")
-                        .WithMany("Books")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Biblioteca.Core.Models.Checkout", null)
-                        .WithMany("Books")
-                        .HasForeignKey("CheckoutId");
-
                     b.HasOne("Biblioteca.Core.Models.Country", "Country")
                         .WithMany("Books")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
-
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("Biblioteca.Core.Models.Checkout", b =>
+            modelBuilder.Entity("Biblioteca.Core.Models.Books.BookAuthor", b =>
+                {
+                    b.HasOne("Biblioteca.Core.Models.Books.Author", "Author")
+                        .WithMany("BookAuthors")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Biblioteca.Core.Models.Books.Book", "Book")
+                        .WithMany("BookAuthors")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("Biblioteca.Core.Models.Books.BookCategory", b =>
+                {
+                    b.HasOne("Biblioteca.Core.Models.Books.Book", "Book")
+                        .WithMany("BookCategories")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Biblioteca.Core.Models.Books.Category", "Category")
+                        .WithMany("BookCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Biblioteca.Core.Models.Checkouts.Checkout", b =>
                 {
                     b.HasOne("Biblioteca.Core.Models.Users.Client", "Client")
                         .WithMany("Checkouts")
@@ -289,9 +335,28 @@ namespace Biblioteca.Data.Migrations
                     b.Navigation("Client");
                 });
 
+            modelBuilder.Entity("Biblioteca.Core.Models.Checkouts.CheckoutBook", b =>
+                {
+                    b.HasOne("Biblioteca.Core.Models.Books.Book", "Book")
+                        .WithMany("CheckoutBooks")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Biblioteca.Core.Models.Checkouts.Checkout", "Checkout")
+                        .WithMany("CheckoutBooks")
+                        .HasForeignKey("CheckoutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Checkout");
+                });
+
             modelBuilder.Entity("Biblioteca.Core.Models.Ticket", b =>
                 {
-                    b.HasOne("Biblioteca.Core.Models.Checkout", "Checkout")
+                    b.HasOne("Biblioteca.Core.Models.Checkouts.Checkout", "Checkout")
                         .WithMany("Tickets")
                         .HasForeignKey("CheckoutId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -308,29 +373,28 @@ namespace Biblioteca.Data.Migrations
                     b.Navigation("Payment");
                 });
 
-            modelBuilder.Entity("BookCategory", b =>
-                {
-                    b.HasOne("Biblioteca.Core.Models.Books.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Biblioteca.Core.Models.Books.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Biblioteca.Core.Models.Books.Author", b =>
                 {
-                    b.Navigation("Books");
+                    b.Navigation("BookAuthors");
                 });
 
-            modelBuilder.Entity("Biblioteca.Core.Models.Checkout", b =>
+            modelBuilder.Entity("Biblioteca.Core.Models.Books.Book", b =>
                 {
-                    b.Navigation("Books");
+                    b.Navigation("BookAuthors");
+
+                    b.Navigation("BookCategories");
+
+                    b.Navigation("CheckoutBooks");
+                });
+
+            modelBuilder.Entity("Biblioteca.Core.Models.Books.Category", b =>
+                {
+                    b.Navigation("BookCategories");
+                });
+
+            modelBuilder.Entity("Biblioteca.Core.Models.Checkouts.Checkout", b =>
+                {
+                    b.Navigation("CheckoutBooks");
 
                     b.Navigation("Tickets");
                 });

@@ -26,16 +26,12 @@ namespace Biblioteca.Data.Configurations.Books
                 .Property(m => m.Title)
                 .IsRequired()
                 .HasMaxLength(50);
-
-            builder
-            .HasOne(m => m.Author)
-            .WithMany(a => a.Books)
-            .HasForeignKey(m => m.AuthorId);
-
             builder
                 .HasOne(m => m.Country)
                 .WithMany(a => a.Books)
                 .HasForeignKey(m => m.CountryId);
+
+
         }
     }
 

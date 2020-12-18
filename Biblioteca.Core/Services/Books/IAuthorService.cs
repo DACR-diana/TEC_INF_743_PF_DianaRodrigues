@@ -8,8 +8,10 @@ namespace Biblioteca.Core.Services.Books
 {
     public interface IAuthorService
     {
-        Task<Author> GetWithBooksById(int id);
-        Task<IEnumerable<Author>> GetAllWithBooksByBooksId(int bookId);
+        Task<IEnumerable<Author>> GetAllAuthors();
+        Task<IEnumerable<Author>> GetAllWithBooks();
+        Task<IEnumerable<Author>> GetWithBooksById(int id);
+
 
     }
 }

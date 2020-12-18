@@ -3,6 +3,7 @@ using Biblioteca.Core.Repositories.Books;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,15 +23,15 @@ namespace Biblioteca.Data.Repositories.Books
         public async Task<IEnumerable<Author>> GetAllWithBooksAsync()
         {
             return await ApiDbContext.Authors
-                .Include(a => a.Books)
+                .Include(a => a.BookAuthors)
                 .ToListAsync();
         }
 
-        public Task<Author> GetWithBooksByIdAsync(int id)
+        public async  Task<IEnumerable<Author>> GetWithBooksByIdAsync(int id)
         {
-            return ApiDbContext.Authors
-                .Include(a => a.Books)
-                .SingleOrDefaultAsync(a => a.Id == id);
+            return await ApiDbContext.Authors
+                .Include(a => a.BookAuthors)
+                .Where(a => a.Id == id).ToListAsync();
         }
 
       

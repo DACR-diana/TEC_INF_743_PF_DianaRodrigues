@@ -23,27 +23,27 @@ namespace Biblioteca.Data.Repositories.Books
         public async Task<IEnumerable<Book>> GetAllWithCategoriesAndAuthorAsync()
         {
             return await ApiDbContext.Books
-                .Include(m => m.Category)
-                .Include(m => m.Author)
+                .Include(m => m.BookCategories)
+                .Include(m => m.BookAuthors)
                 .ToListAsync();
         }
 
         public async Task<Book> GetWithCategoriesAndAuthorByIdAsync(int id)
         {
             return await ApiDbContext.Books
-              .Include(m => m.Category)
-                .Include(m => m.Author)
+              .Include(m => m.BookCategories)
+                .Include(m => m.BookAuthors)
                 .SingleOrDefaultAsync(m => m.Id == id); ;
         }
 
-        public async Task<IEnumerable<Book>> GetAllWithCategoriesAndAuthorByAuthorIdAsync(int authorId)
-        {
-            return await ApiDbContext.Books
-               .Include(m => m.Category)
-                .Include(m => m.Author)
-                .Where(m => m.Author.Id == authorId)
-                .ToListAsync();
-        }
+        //public async Task<IEnumerable<Book>> GetAllWithCategoriesAndAuthorByAuthorIdAsync(int authorId)
+        //{
+        //    return await ApiDbContext.Books
+        //       .Include(m => m.BookCategories)
+        //        .Include(m => m.BookAuthors)
+        //        .Where(m => m.BookAuthors. == authorId)
+        //        .ToListAsync();
+        //}
 
 
     }

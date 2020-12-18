@@ -9,6 +9,6 @@ namespace Biblioteca.Core.Repositories.Books
     public interface ICategoryRepository : IRepository<Category>
     {
         Task<IEnumerable<Category>> GetAllWithBooksAsync();
-        Task<Category> GetWithBooksByIdAsync(int id);
+        Task<IEnumerable<Category>> GetWithBooksByIdAsync(int id);
     }
 }
