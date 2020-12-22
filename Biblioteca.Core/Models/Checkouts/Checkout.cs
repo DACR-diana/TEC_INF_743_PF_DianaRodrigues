@@ -10,7 +10,7 @@ namespace Biblioteca.Core.Models.Checkouts
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public DateTime DeliveryDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         public DateTime ExpectedDate { get; set; }
         public int ClientId { get; set; }
         public Client Client { get; set; }

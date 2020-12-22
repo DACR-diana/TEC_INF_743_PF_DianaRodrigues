@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Biblioteca.Data.Migrations
 {
-    public partial class InicialMigration : Migration
+    public partial class BaseMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -100,7 +100,7 @@ namespace Biblioteca.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ExpectedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -146,7 +146,7 @@ namespace Biblioteca.Data.Migrations
                     Price = table.Column<decimal>(type: "decimal", nullable: false),
                     State = table.Column<bool>(type: "bit", nullable: false),
                     PaymentId = table.Column<int>(type: "int", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CheckoutId = table.Column<int>(type: "int", nullable: false)
                 },

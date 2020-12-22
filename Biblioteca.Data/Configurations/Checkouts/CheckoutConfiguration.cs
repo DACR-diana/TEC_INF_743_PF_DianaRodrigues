@@ -21,6 +21,12 @@ namespace Biblioteca.Data.Configurations.Checkouts
             builder
                .Property(m => m.Date)
                .IsRequired();
+
+            builder
+             .Property(m => m.DeliveryDate)
+             .IsRequired(false);
+
+
             builder
               .Property(m => m.ExpectedDate)
               .IsRequired();

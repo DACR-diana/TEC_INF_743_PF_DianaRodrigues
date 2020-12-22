@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Biblioteca.Data.Repositories.Checkouts
 {
-    public class CheckoutRepository : Repository<Checkout>,ICheckoutRepository
+    public class CheckoutRepository : Repository<Checkout>, ICheckoutRepository
     {
         private ApiDbContext ApiDbContext
         {
@@ -22,16 +22,15 @@ namespace Biblioteca.Data.Repositories.Checkouts
 
         public async Task<IEnumerable<Checkout>> GetAllWithClientsAndBookAsync()
         {
-            return await ApiDbContext.Checkouts.Include(m=>m.CheckoutBooks).Include(m=>m.CheckoutBooks)
+            return await ApiDbContext.Checkouts.Include(m => m.CheckoutBooks).Include(m => m.CheckoutBooks)
                 .ToListAsync();
         }
 
         //public async Task<Checkout> GetWithUserAndBookByIdAsync(int id)
         //{
         //    return await ApiDbContext.Checkouts
-        //      .Include(m => m.Client)
-        //        .Include(m => m.Books)
-        //        .SingleOrDefaultAsync(m => m.Id == id); ;
+        //        .FromSqlRaw($"SELECT * Checkouts INNER JOIN  ", type)
+        //        .SingleOrDefaultAsync(m => m.Id == id);
         //}
 
         //public async Task<IEnumerable<Checkout>> GetAllWithUserAndBookByUserIdAsync(int userId)

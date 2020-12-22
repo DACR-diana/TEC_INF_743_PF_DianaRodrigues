@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteca.Data.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20201218021846_InicialMigration")]
-    partial class InicialMigration
+    [Migration("20201222024154_PopulateMigration")]
+    partial class PopulateMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -123,7 +123,7 @@ namespace Biblioteca.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DeliveryDate")
+                    b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpectedDate")
@@ -194,7 +194,7 @@ namespace Biblioteca.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentId")
