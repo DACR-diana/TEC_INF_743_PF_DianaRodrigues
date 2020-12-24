@@ -1,6 +1,12 @@
 ﻿using AutoMapper;
+using Biblioteca.Api.Resources;
 using Biblioteca.Api.Resources.Books;
+using Biblioteca.Api.Resources.Checkouts;
+using Biblioteca.Api.Resources.Users;
+using Biblioteca.Core.Models;
 using Biblioteca.Core.Models.Books;
+using Biblioteca.Core.Models.Checkouts;
+using Biblioteca.Core.Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +22,24 @@ namespace Biblioteca.Api.Mapping
             CreateMap<Author, AuthorResource>();
             CreateMap<Category, CategoryResource>();
             CreateMap<Book, BookResource>();
+            CreateMap<Checkout, CheckoutResource>();
+            CreateMap<CheckoutBook, CheckoutBookResource>();
+            CreateMap<User, UserResource>();
+            CreateMap<Employee, EmployeeResource>();
+            CreateMap<Client, ClientResource>();
+            CreateMap<Country, CountryResource>();
+
 
             // Resource to Domain
             CreateMap<AuthorResource, Author>();
             CreateMap<CategoryResource, Category>();
             CreateMap<BookResource, Book>();
+            CreateMap<CheckoutResource, Checkout>();
+            CreateMap<CheckoutBookResource, CheckoutBook>();
+            CreateMap<UserResource, User>();
+            CreateMap<EmployeeResource, Employee>();
+            CreateMap<ClientResource, Client>();
+            CreateMap<CountryResource, Country>();
 
         }
     }

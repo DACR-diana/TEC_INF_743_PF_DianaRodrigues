@@ -1,4 +1,5 @@
-﻿using Biblioteca.Core.Models.Checkouts;
+﻿using Biblioteca.Core.Models.Books;
+using Biblioteca.Core.Models.Checkouts;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,11 @@ namespace Biblioteca.Core.Repositories.Checkouts
     public interface ICheckoutRepository : IRepository<Checkout>
     {
         Task<IEnumerable<Checkout>> GetAllWithClientsAndBookAsync();
-        //Task<Checkout> GetWithUserAndBookByIdAsync(int id);
-        //Task<IEnumerable<Checkout>> GetAllWithUserAndBookByUserIdAsync(int userId);
+        Task<IEnumerable<Checkout>> GetWithUserAndBookByIdAsync(int id);
+        Task<IEnumerable<Checkout>> GetAllWithUserAndBookByUserIdAsync(int userId);
+
+
+        Task<Checkout> CreateCheckout(Checkout newCheckout);
+        Task<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated);
     }
 }

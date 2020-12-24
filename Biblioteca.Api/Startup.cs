@@ -9,6 +9,7 @@ using Biblioteca.Core.Repositories.Books;
 using Biblioteca.Core.Repositories.Users;
 using Biblioteca.Core.Services;
 using Biblioteca.Core.Services.Books;
+using Biblioteca.Core.Services.Checkouts;
 using Biblioteca.Core.Services.Users;
 using Biblioteca.Data;
 using Biblioteca.Data.Repositories;
@@ -49,7 +50,7 @@ namespace Biblioteca.Api
             services.AddTransient<ICategoryService, CategoryService>();
             //services.AddTransient<IEmployeeService, EmployeeService>();
             //services.AddTransient<IClientService, ClientService>();
-            //services.AddTransient<ICheckoutService, CheckoutService>();
+            services.AddTransient<ICheckoutService, CheckoutService>();
             ////services.AddTransient<ICountryService, CountryService>();
             ////services.AddTransient<IPaymentService, PaymentService>();
             //services.AddTransient<ITicketService, TicketService>();

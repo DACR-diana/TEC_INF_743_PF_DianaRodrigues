@@ -9,6 +9,7 @@ using Biblioteca.Data.Configurations.Users;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Text;
 
 namespace Biblioteca.Data
@@ -36,8 +37,8 @@ namespace Biblioteca.Data
 
         #region Checkouts
 
-        public DbSet<Checkout> Checkouts { get; set; }
-        public DbSet<CheckoutBook> CheckoutBooks { get; set; }
+        public DbQuery<Checkout> Checkouts { get; set; }
+        public DbQuery<CheckoutBook> CheckoutBooks { get; set; }
 
         #endregion
 
