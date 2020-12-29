@@ -9,12 +9,9 @@ namespace Biblioteca.Core.Repositories.Checkouts
 {
     public interface ICheckoutRepository : IRepository<Checkout>
     {
-        Task<IEnumerable<Checkout>> GetAllWithClientsAndBookAsync();
-        Task<IEnumerable<Checkout>> GetWithUserAndBookByIdAsync(int id);
-        Task<IEnumerable<Checkout>> GetAllWithUserAndBookByUserIdAsync(int userId);
 
-
-        Task<Checkout> CreateCheckout(Checkout newCheckout);
-        Task<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated);
+        Checkout GetWithCheckoutBooksByFilter(string[] filters, string[] filters_text);
+        Checkout CreateCheckout(Checkout newCheckout);
+        Checkout UpdateCheckout(Checkout checkoutToBeUpdated);
     }
 }

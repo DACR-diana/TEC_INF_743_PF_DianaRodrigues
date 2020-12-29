@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,123 +25,106 @@ namespace Biblioteca.Data.Repositories.Checkouts
             : base(context)
         { }
 
+        private FactoryRepository factory = new FactoryRepository();
 
 
-        public async Task<IEnumerable<Checkout>> GetAllWithClientsAndBookAsync()
+        public Checkout GetWithCheckoutBooksByFilter(string[] filters, string[] filters_text)
         {
+            HashSet<string> keys = new HashSet<string>();
+            HashSet<string> values = new HashSet<string>();
 
-            //var list = GetCheckoutBookAsync();
-
-            //var result = ApiDbContext.Checkouts
-            //    .FromSqlRaw(@"SELECT Checkouts.Id as 'Id',Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
-            //                    Checkouts.DeliveryDate,Checkouts.ExpectedDate,
-            //                    Books.Id as 'BookId', Books.Title FROM Checkouts
-            //                    inner join Clients on Clients.Id = Checkouts.ClientId
-            //                    inner join CheckoutBooks on CheckoutBooks.CheckoutId = Checkouts.Id
-            //                    inner join Books on Books.Id = CheckoutBooks.BookId")
-            //    .ToList();
-
-            //var newResult = result.Join(list);
+            for (int i = 0; i < filters_text.Length; i++)
+            {
+                keys.Add($"@{filters[i].Replace(".","")}");
+                values.Add(filters_text[i].ToString());
+            }
 
 
-            return await ApiDbContext.Checkouts
-                .(@"SELECT Checkouts.Id as 'Id',Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
-                                Checkouts.DeliveryDate,Checkouts.ExpectedDate,
-                                Books.Id as 'BookId', Books.Title FROM Checkouts
-                                inner join Clients on Clients.Id = Checkouts.ClientId
-                                inner join CheckoutBooks on CheckoutBooks.CheckoutId = Checkouts.Id
-                                inner join Books on Books.Id = CheckoutBooks.BookId")
-                .ToListAsync();
-        }
-
-        private List<CheckoutBook> GetCheckoutBookAsync()
-        {
-            return ApiDbContext.CheckoutBooks
-               .FromSqlRaw(@$"SELECT Checkouts.Id as 'CheckoutId',Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
+            string query = @"SELECT Checkouts.Id as 'Id',Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
                                 Checkouts.DeliveryDate,Checkouts.ExpectedDate,
                                 Books.Id as 'BookId', Books.Title as 'Title' FROM Checkouts
                                 inner join Clients on Clients.Id = Checkouts.ClientId
                                 inner join CheckoutBooks on CheckoutBooks.CheckoutId = Checkouts.Id
-                                inner join Books on Books.Id = CheckoutBooks.BookId")
-                .ToList();
-        }
+                               inner join Books on Books.Id = CheckoutBooks.BookId
+                                 Where";
 
-        public async Task<IEnumerable<Checkout>> GetWithUserAndBookByIdAsync(int id)
-        {
-            return await ApiDbContext.Checkouts
-               .FromSqlRaw(@$"SELECT Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
-                                Checkouts.DeliveryDate,Checkouts.ExpectedDate,
-                                Books.Id as 'BookId', Books.Title FROM Checkouts
-                                inner join Clients on Clients.Id = Checkouts.ClientId
-                                inner join CheckoutBooks on CheckoutBooks.CheckoutId = Checkouts.Id
-                                inner join Books on Books.Id = CheckoutBooks.BookId")
-               .Where(m => m.Client.Id == id)
-                .ToListAsync();
-        }
+            for (int i = 0; i < filters.Length; i++)
+                query += i == 0 ? $" {filters[i]}={keys.ToArray()[i]}" : $" AND {filters[i]}={keys.ToArray()[i]}";
 
-        public async Task<IEnumerable<Checkout>> GetAllWithUserAndBookByUserIdAsync(int userId)
-        {
-            return await ApiDbContext.Checkouts
-               .FromSqlRaw(@"SELECT Checkouts.Id as 'CheckoutId',Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
-                                Checkouts.DeliveryDate,Checkouts.ExpectedDate,
-                                Books.Id as 'BookId', Books.Title FROM Checkouts
-                                inner join Clients on Clients.Id = Checkouts.ClientId
-                                inner join CheckoutBooks on CheckoutBooks.CheckoutId = Checkouts.Id
-                                inner join Books on Books.Id = CheckoutBooks.BookId")
-               .Where(m => m.Client.Id == userId)
-               .ToListAsync();
-        }
+            DataTable dataTableCheckouts = factory.SelectQuery(query, keys.ToArray(), values.ToArray());
 
-        public async Task<Checkout> CreateCheckout(Checkout newCheckout)
-        {
-            await ApiDbContext.Database.EnsureCreatedAsync();
-
-            SqlParameter date = new SqlParameter("@Date", newCheckout.Date.ToString("s"));
-            SqlParameter expectedDate = new SqlParameter("@ExpectedDate", newCheckout.ExpectedDate.ToString("s"));
-            SqlParameter clientId = new SqlParameter("@ClientId", newCheckout.ClientId.ToString());
-
-            await ApiDbContext.Database.ExecuteSqlRawAsync("INSERT INTO Checkouts (Date,ExpectedDate,ClientId) Values (@Date,@ExpectedDate,@ClientId)",
-                date, expectedDate, clientId);
-
-            ApiDbContext.SaveChanges();
-
-            await CreateCheckoutBooks(newCheckout.Id, newCheckout.CheckoutBooks);
-
-            return newCheckout;
-        }
+            Checkout checkout = new Checkout();
+            List<CheckoutBook> checkoutBooks = new List<CheckoutBook>();
 
 
-        private async Task<IEnumerable<Checkout>> CreateCheckoutBooks(int checkoutId, ICollection<CheckoutBook> books)
-        {
-
-            foreach (var book in books)
+            if (dataTableCheckouts.Rows.Count > 0)
             {
-                await ApiDbContext.Database.EnsureCreatedAsync();
+                Client client = new Client();
 
-                SqlParameter bookId = new SqlParameter("@BookId", book.BookId);
-                SqlParameter checkoutID = new SqlParameter("@CheckoutId", checkoutId);
+                client.Id = int.Parse(dataTableCheckouts.Rows[0]["ClientId"].ToString());
+                client.Name = dataTableCheckouts.Rows[0]["Name"].ToString();
 
-                await ApiDbContext.Database.ExecuteSqlRawAsync("INSERT INTO CheckoutBooks (BookId,CheckoutId) Values (@BookId,@CheckoutId)",
-                    bookId, checkoutID);
+                checkout.Id = int.Parse(dataTableCheckouts.Rows[0]["Id"].ToString());
+                checkout.DeliveryDate = dataTableCheckouts.Rows[0]["DeliveryDate"].ToString() == string.Empty ? (DateTime?)null : DateTime.Parse(dataTableCheckouts.Rows[0]["DeliveryDate"].ToString());
+                checkout.ExpectedDate = DateTime.Parse(dataTableCheckouts.Rows[0]["ExpectedDate"].ToString());
 
-                ApiDbContext.SaveChanges();
+                for (int i = 0; i < dataTableCheckouts.Rows.Count; i++)
+                {
+                    CheckoutBook checkoutBook = new CheckoutBook();
+                    Book book = new Book();
+
+                    book.Id= int.Parse(dataTableCheckouts.Rows[i]["BookId"].ToString());
+                    book.Title= dataTableCheckouts.Rows[i]["Title"].ToString();
+                    checkoutBook.Book = book;
+
+                    checkoutBooks.Add(checkoutBook);
+                }
+
+                checkout.CheckoutBooks = checkoutBooks;
             }
-
-            return await GetWithUserAndBookByIdAsync(checkoutId);
+            return checkout;
         }
 
-        public async Task<Checkout> UpdateCheckout(Checkout checkout)
+
+        public Checkout CreateCheckout(Checkout newCheckout)
         {
-            await ApiDbContext.Database.EnsureCreatedAsync();
 
-            SqlParameter id = new SqlParameter("@Id", checkout.Id.ToString());
-            SqlParameter deliveryDate = new SqlParameter("@DeliveryDate", checkout.DeliveryDate.ToString());
+            string[] keys = { "@Date", "@ExpectedDate", "ClientId" };
+            string[] values = { newCheckout.Date.ToString("s"), newCheckout.ExpectedDate.ToString("s"), newCheckout.ClientId.ToString() };
 
-            await ApiDbContext.Database.ExecuteSqlRawAsync("UPDATE Checkouts set DeliveryDate=@Date where Id=@Id", deliveryDate, id);
+            string query = @"INSERT INTO Checkouts (Date,ExpectedDate,ClientId) Values (@Date,@ExpectedDate,@ClientId)";
 
-            ApiDbContext.SaveChanges();
+            Checkout checkout = GetWithCheckoutBooksByFilter(new string[] {"Checkouts.Id" }, new string[] { factory.SelectQuery(query, keys, values).Rows[0][0].ToString() });
 
-            return checkout;
+            return CreateCheckoutBooks(checkout.Id, newCheckout.CheckoutBooks);
+        }
+
+        private Checkout CreateCheckoutBooks(int checkoutId, ICollection<CheckoutBook> books)
+        {
+
+            foreach(var book in books)
+            {
+                string[] keys = { "@BookId", "@CheckoutId"};
+                string[] values = { book.BookId.ToString(), checkoutId.ToString() };
+
+                string query = @"INSERT INTO CheckoutBooks (BookId,CheckoutId) Values (@BookId,@CheckoutId)";
+
+                factory.SelectQuery(query, keys, values);
+            }
+            return GetWithCheckoutBooksByFilter(new string[] { "Checkouts.Id" }, new string[] { checkoutId.ToString() });
+        }
+
+        public Checkout UpdateCheckout(Checkout checkout)
+        {
+            string[] keys = { "@Id", "@DeliveryDate"};
+            string[] values = { checkout.Id.ToString(), checkout.DeliveryDate.ToString()};
+
+            string query = @"UPDATE Checkouts set DeliveryDate=@DeliveryDate where Id=@Id";
+
+            factory.SelectQuery(query, keys, values);
+
+            return GetWithCheckoutBooksByFilter(new string[] { "Checkouts.Id" }, new string[] { checkout.Id.ToString() });
+            ;
         }
     }
 }

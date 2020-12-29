@@ -17,29 +17,30 @@ namespace Biblioteca.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Checkout>> GetAllWithClientsAndBook()
+        public Checkout GetWithCheckoutBooksById(int Id)
         {
-            return await _unitOfWork.Checkouts.GetAllWithClientsAndBookAsync();
+            string[] filters = new string[] { "Checkouts.Id" };
+            string[] filters_text = new string[] { Id.ToString() };
+
+            return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilter(filters, filters_text);
         }
 
-        public async Task<IEnumerable<Checkout>> GetWithUserAndBookById(int id)
+        public Checkout GetWithCheckoutBooksByClientId(int Id)
         {
-            return await _unitOfWork.Checkouts.GetWithUserAndBookByIdAsync(id);
+            string[] filters = new string[] { "ClientId" };
+            string[] filters_text = new string[] { Id.ToString() };
+            return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilter(filters, filters_text);
         }
 
-        public async Task<IEnumerable<Checkout>> GetAllWithUserAndBookByUserId(int userId)
+
+        public Checkout CreateCheckout(Checkout newCheckout)
         {
-            return await _unitOfWork.Checkouts.GetAllWithUserAndBookByUserIdAsync(userId);
+            return _unitOfWork.Checkouts.CreateCheckout(newCheckout);
         }
 
-        public async Task<Checkout> CreateCheckout(Checkout newCheckout)
+        public Checkout UpdateCheckout(Checkout checkoutToBeUpdated)
         {
-            return await _unitOfWork.Checkouts.CreateCheckout(newCheckout); 
-        }
-
-        public async Task<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated)
-        {
-            return await _unitOfWork.Checkouts.UpdateCheckout(checkoutToBeUpdated);
+            return _unitOfWork.Checkouts.UpdateCheckout(checkoutToBeUpdated);
         }
     }
 }

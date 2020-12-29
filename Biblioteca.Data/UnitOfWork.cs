@@ -27,15 +27,12 @@ namespace Biblioteca.Data
         private CountryRepository _countryRepository;
         private PaymentRepository _paymentRepository;
         private TicketRepository _ticketRepository;
-        private FactoryRepository _factoryRepository;
 
 
         public UnitOfWork(ApiDbContext context)
         {
             this._context = context;
         }
-
-
 
 
         public IBookRepository Books => _bookRepository = _bookRepository ?? new BookRepository(_context);
@@ -49,7 +46,6 @@ namespace Biblioteca.Data
         public ICountryRepository Countries => _countryRepository = _countryRepository ?? new CountryRepository(_context);
         public IPaymentRepository Payments => _paymentRepository = _paymentRepository ?? new PaymentRepository(_context);
         public ITicketRepository Tickets => _ticketRepository = _ticketRepository ?? new TicketRepository(_context);
-        public IFactoryRepository Factories => _factoryRepository = _factoryRepository ?? new FactoryRepository(_context);
 
 
 

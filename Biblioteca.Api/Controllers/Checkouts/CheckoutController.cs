@@ -28,29 +28,16 @@ namespace Biblioteca.Api.Controllers.Checkouts
         }
 
 
-        [HttpGet("")]
-        public async Task<ActionResult<IEnumerable<CheckoutResource>>> GetAllWithClientsAndBook()
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CheckoutResource>> GetWithCheckoutBooksById(int id)
         {
-            var checkouts = await _checkoutService.GetAllWithClientsAndBook();
-            var checkoutsResource = _mapper.Map<IEnumerable<Checkout>, IEnumerable<CheckoutResource>>(checkouts);
+            var checkouts = _checkoutService.GetWithCheckoutBooksById(id);
+            var checkoutsResource = _mapper.Map<Checkout, CheckoutResource>(checkouts);
             return Ok(checkoutsResource);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<CheckoutResource>>> GetWithUserAndBookById(int id)
-        {
-            var checkouts = await _checkoutService.GetWithUserAndBookById(id);
-            var checkoutsResource = _mapper.Map<IEnumerable<Checkout>, IEnumerable<CheckoutResource>>(checkouts);
-            return Ok(checkoutsResource);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<CheckoutResource>>> GetAllWithUserAndBookByUserId(int userId)
-        {
-            var checkouts = await _checkoutService.GetAllWithUserAndBookByUserId(userId);
-            var checkoutsResource = _mapper.Map<IEnumerable<Checkout>, IEnumerable<CheckoutResource>>(checkouts);
-            return Ok(checkoutsResource);
-        }
 
         [HttpPost("")]
         public async Task<ActionResult<CheckoutResource>> CreateCheckout([FromBody] SaveCheckoutResource saveCheckoutResource) // object coming from requests body
@@ -59,18 +46,17 @@ namespace Biblioteca.Api.Controllers.Checkouts
             var validationResult = await validator.ValidateAsync(saveCheckoutResource);
 
             if (!validationResult.IsValid)
-                return BadRequest(validationResult.Errors); 
+                return BadRequest(validationResult.Errors);
 
             var checkoutToCreate = _mapper.Map<SaveCheckoutResource, Checkout>(saveCheckoutResource);
 
-            var newCheckout = await _checkoutService.CreateCheckout(checkoutToCreate);
+            var newCheckout = _checkoutService.CreateCheckout(checkoutToCreate);
 
-            var databaseCheckouts = await _checkoutService.GetWithUserAndBookById(newCheckout.Id);
+            var databaseCheckouts = _checkoutService.GetWithCheckoutBooksById(newCheckout.Id);
 
-            var checkoutResource= new List<CheckoutResource>();
+            var checkoutResource = new List<CheckoutResource>();
 
-            foreach (var checkout in databaseCheckouts)
-                checkoutResource.Add(_mapper.Map<Checkout, CheckoutResource>(checkout));
+            checkoutResource.Add(_mapper.Map<Checkout, CheckoutResource>(databaseCheckouts));
 
             return Ok(checkoutResource);
         }

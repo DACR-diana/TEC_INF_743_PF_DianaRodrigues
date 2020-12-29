@@ -9,18 +9,11 @@ using System.Text;
 
 namespace Biblioteca.Data.Repositories.Checkouts
 {
-    public class FactoryRepository : Repository<FactoryRepository>
+    public class FactoryRepository 
     {
 
-        //private string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=library_1;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-        private ApiDbContext ApiDbContext
-        {
-            get { return Context as ApiDbContext; }
-        }
-
-        public FactoryRepository(ApiDbContext context) : base(context)
-        { }
-
+        private string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=library_1;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+     
         public SqlParameter AddSqlParameter(string value)
         {
             SqlParameter parameter = new SqlParameter();

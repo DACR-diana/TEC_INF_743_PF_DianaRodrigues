@@ -9,12 +9,9 @@ namespace Biblioteca.Core.Services.Checkouts
 {
     public interface ICheckoutService
     {
-        Task<IEnumerable<Checkout>> GetAllWithClientsAndBook();
-        Task<IEnumerable<Checkout>> GetWithUserAndBookById(int id);
-        Task<IEnumerable<Checkout>> GetAllWithUserAndBookByUserId(int userId);
-
-
-        Task<Checkout> CreateCheckout(Checkout newCheckout);
-        Task<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated);
+        Checkout GetWithCheckoutBooksById(int Id);
+        Checkout GetWithCheckoutBooksByClientId(int Id);
+        Checkout CreateCheckout(Checkout newCheckout);
+        Checkout UpdateCheckout(Checkout checkoutToBeUpdated);
     }
 }

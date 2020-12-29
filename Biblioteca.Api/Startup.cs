@@ -1,32 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Biblioteca.Core;
-using Biblioteca.Core.Repositories;
-using Biblioteca.Core.Repositories.Books;
-using Biblioteca.Core.Repositories.Users;
-using Biblioteca.Core.Services;
 using Biblioteca.Core.Services.Books;
 using Biblioteca.Core.Services.Checkouts;
-using Biblioteca.Core.Services.Users;
 using Biblioteca.Data;
-using Biblioteca.Data.Repositories;
-using Biblioteca.Data.Repositories.Books;
-using Biblioteca.Data.Repositories.Users;
 using Biblioteca.Services;
 using Biblioteca.Services.Books;
-using Biblioteca.Services.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Biblioteca.Api
 {
