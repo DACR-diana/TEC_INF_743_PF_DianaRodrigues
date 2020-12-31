@@ -62,7 +62,7 @@ namespace Biblioteca.WebApp.Controllers
                 }
             }
 
-            AddViewModel categoriesAuthors = new AddViewModel() { categories = categories, authors = authors,countries=countries };
+            AddViewModel categoriesAuthors = new AddViewModel() { categories = categories, authors = authors, countries = countries };
             return View(categoriesAuthors);
         }
 
@@ -79,44 +79,51 @@ namespace Biblioteca.WebApp.Controllers
             var authors = Request.Form["authors"];
             var country = Request.Form["country"];
 
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-
-            using (HttpClient client = new HttpClient(httpClientHandler))
+            if (categories.Count == 0 || authors.Count == 0 || country.Count == 0)
+                return NotFound();
+            else
             {
+                var httpClientHandler = new HttpClientHandler();
+                httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
 
-                Book book = new Book();
-                book.Country = new Models.Country() { Id = int.Parse(country) };
-                book.ISBN = int.Parse(isbn);
-                book.Title = title;
-                book.State = true;
-
-                foreach (var author in authors)
-                    book.Authors.Add(new Author() { Id = int.Parse(author) });
-
-                foreach (var category in categories)
-                    book.Categories.Add(new Category() { Id = int.Parse(category) });
-
-
-
-                HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
-                string endpoint = apiBaseUrl + $"Book/CreateBook";
-
-
-                using (var Response = await client.PostAsync(endpoint, content))
+                using (HttpClient client = new HttpClient(httpClientHandler))
                 {
 
+                    Book book = new Book();
+                    book.Country = new Models.Country() { Id = int.Parse(country) };
+                    book.ISBN = int.Parse(isbn);
+                    book.Title = title;
+                    book.State = true;
 
-                    if (Response.StatusCode == System.Net.HttpStatusCode.OK)
-                        return View("List");
-                    else
+                    List<Author> authorsList = new List<Author>();
+                    List<Category> categoriesList = new List<Category>();
+
+                    foreach (var author in authors)
+                        authorsList.Add(new Author() { Id = int.Parse(author) });
+
+                    foreach (var category in categories)
+                        categoriesList.Add(new Category() { Id = int.Parse(category) });
+
+
+                    book.Authors = authorsList;
+                    book.Categories = categoriesList;
+
+                    HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
+                    string endpoint = apiBaseUrl + $"Book/CreateBook";
+
+                    using (var Response = await client.PostAsync(endpoint, content))
                     {
-                        ModelState.Clear();
-                        ModelState.AddModelError(string.Empty, "Username or Password is Incorrect");
-                        return NotFound();
+                        if (Response.StatusCode == System.Net.HttpStatusCode.OK)
+                            return View("List");
+                        else
+                        {
+                            ModelState.Clear();
+                            ModelState.AddModelError(string.Empty, "Username or Password is Incorrect");
+                            return NotFound();
+
+                        }
 
                     }
-
                 }
             }
         }
