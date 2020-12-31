@@ -30,7 +30,7 @@ namespace Biblioteca.Api.Controllers.Checkouts
 
 
 
-        [HttpGet("{id}")]
+        [HttpGet("GetWithCheckoutBooksById/{id}")]
         public async Task<ActionResult<CheckoutResource>> GetWithCheckoutBooksById(int id)
         {
             var checkouts = _checkoutService.GetWithCheckoutBooksById(id);

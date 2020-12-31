@@ -1,10 +1,13 @@
 using AutoMapper;
 using Biblioteca.Core;
+using Biblioteca.Core.Services;
 using Biblioteca.Core.Services.Books;
 using Biblioteca.Core.Services.Checkouts;
+using Biblioteca.Core.Services.Users;
 using Biblioteca.Data;
 using Biblioteca.Services;
 using Biblioteca.Services.Books;
+using Biblioteca.Services.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -32,11 +35,11 @@ namespace Biblioteca.Api
             services.AddTransient<IBookService, BookService>();
             services.AddTransient<IAuthorService, AuthorService>();
             services.AddTransient<ICategoryService, CategoryService>();
-            //services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IEmployeeService, EmployeeService>();
             //services.AddTransient<IClientService, ClientService>();
             services.AddTransient<ICheckoutService, CheckoutService>();
-            ////services.AddTransient<ICountryService, CountryService>();
-            ////services.AddTransient<IPaymentService, PaymentService>();
+            services.AddTransient<ICountryService, CountryService>();
+            services.AddTransient<IPaymentService, PaymentService>();
             //services.AddTransient<ITicketService, TicketService>();
 
             services.AddSwaggerGen();

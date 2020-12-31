@@ -8,10 +8,6 @@ namespace Biblioteca.Core.Services.Users
 {
     public interface IEmployeeService
     {
-        Task<Employee> GetByEmailAsync(string email);
-
-
-        Task<Employee> CreateEmployee(Employee newEmployee);
-        Task UpdateEmployee(Employee employeeToBeUpdated, Employee employee);
+        Task<Employee> GetByEmail(string email, string employeeNumber);
     }
 }

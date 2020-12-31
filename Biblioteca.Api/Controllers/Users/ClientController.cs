@@ -6,11 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Api.Controllers.Users
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class ClientController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        //// Dependency Injection
+        //private readonly IBookService _bookService;
+        //private readonly IMapper _mapper;
+
+        //public BookController(IBookService bookService, IMapper mapper)
+        //{
+        //    this._mapper = mapper;
+        //    this._bookService = bookService;
+        //}
+
     }
 }

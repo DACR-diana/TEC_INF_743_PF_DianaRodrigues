@@ -20,10 +20,10 @@ namespace Biblioteca.Data.Repositories.Users
             : base(context)
         { }
 
-        public async Task<Employee> GetByEmailAsync(string email)
+        public async Task<Employee> GetByEmailAsync(string email,string employeeNumber)
         {
             return await ApiDbContext.Employees
-                .SingleOrDefaultAsync(m => m.Email == email);
+                .SingleOrDefaultAsync(m => m.Email == email && m.EmployeeNumber== employeeNumber);
         }
     }
 }

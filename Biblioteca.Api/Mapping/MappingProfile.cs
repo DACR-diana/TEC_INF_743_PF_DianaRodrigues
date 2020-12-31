@@ -28,18 +28,22 @@ namespace Biblioteca.Api.Mapping
             CreateMap<Employee, EmployeeResource>();
             CreateMap<Client, ClientResource>();
             CreateMap<Country, CountryResource>();
+            CreateMap<Payment, PaymentResource>();
 
 
             // Resource to Domain
             CreateMap<AuthorResource, Author>();
             CreateMap<CategoryResource, Category>();
             CreateMap<BookResource, Book>();
+            CreateMap<SaveBookResource, Book>();
             CreateMap<CheckoutResource, Checkout>();
+            CreateMap<SaveCheckoutResource, Checkout>();
             CreateMap<CheckoutBookResource, CheckoutBook>();
             CreateMap<UserResource, User>();
             CreateMap<EmployeeResource, Employee>();
             CreateMap<ClientResource, Client>();
             CreateMap<CountryResource, Country>();
+            CreateMap<PaymentResource, Payment>();
 
         }
     }

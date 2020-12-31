@@ -9,6 +9,6 @@ namespace Biblioteca.Core.Repositories.Users
   
     public interface IEmployeeRepository : IRepository<Employee>
     {
-        Task<Employee> GetByEmailAsync(string email);
+        Task<Employee> GetByEmailAsync(string email, string employeeNumber);
     }
 }

@@ -27,7 +27,7 @@ namespace Biblioteca.Api.Controllers.Books
 
 
 
-        [HttpGet("")]
+        [HttpGet("GetAllAuthors")]
         public async Task<ActionResult<IEnumerable<AuthorResource>>> GetAllAuthors()
         {
             var authors = await _auhtorService.GetAllAuthors();
