@@ -18,12 +18,17 @@ namespace Biblioteca.Api.Controllers.Books
         
         // Dependency Injection
         private readonly IBookService _bookService;
+        private readonly IBookCategoryService _bookCategoryService;
+        private readonly IBookAuthorService _bookAuhtorService;
         private readonly IMapper _mapper;
 
-        public BookController(IBookService bookService, IMapper mapper)
+        public BookController(IBookService bookService, IBookCategoryService bookCategoryService,
+            IBookAuthorService bookAuhtorService, IMapper mapper)
         {
             this._mapper = mapper;
             this._bookService = bookService;
+            this._bookCategoryService = bookCategoryService;
+            this._bookAuhtorService = bookAuhtorService;
         }
 
 
@@ -48,8 +53,26 @@ namespace Biblioteca.Api.Controllers.Books
 
             var newBook = await _bookService.CreateBook(bookToCreate);
 
-            var databaseBooks = await _bookService.GetWithCategoriesAndAuthorById(newBook.Id);
+            foreach(var author in saveBookResource.Authors){
+                BookAuthorResource bookAuthorResource = new BookAuthorResource();
+                bookAuthorResource.AuthorId = author.Id;
+                bookAuthorResource.BookId = newBook.Id;
 
+                var bookAuthorToCreate = _mapper.Map<BookAuthorResource, BookAuthor>(bookAuthorResource);
+                var newBookAuhtor = await _bookAuhtorService.CreateBookAuthor(bookAuthorToCreate);
+            }
+
+            foreach (var category in saveBookResource.Categories)
+            {
+                BookCategoryResource bookCategoryResource = new BookCategoryResource();
+                bookCategoryResource.CategoryId = category.Id;
+                bookCategoryResource.BookId = newBook.Id;
+
+                var bookCategoryToCreate = _mapper.Map<BookCategoryResource, BookCategory>(bookCategoryResource);
+                var newBookCategory = await _bookCategoryService.CreateBookCategory(bookCategoryToCreate);
+            }
+
+            var databaseBooks = await _bookService.GetWithCategoriesAndAuthorById(newBook.Id);
 
             return Ok(_mapper.Map<Book, BookResource>(databaseBooks));
         }

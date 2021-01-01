@@ -90,7 +90,7 @@ namespace Biblioteca.WebApp.Controllers
                 {
 
                     Book book = new Book();
-                    book.Country = new Models.Country() { Id = int.Parse(country) };
+                    book.CountryId = int.Parse(country);
                     book.ISBN = int.Parse(isbn);
                     book.Title = title;
                     book.State = true;
@@ -110,7 +110,6 @@ namespace Biblioteca.WebApp.Controllers
 
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
                     string endpoint = apiBaseUrl + $"Book/CreateBook";
-
                     using (var Response = await client.PostAsync(endpoint, content))
                     {
                         if (Response.StatusCode == System.Net.HttpStatusCode.OK)

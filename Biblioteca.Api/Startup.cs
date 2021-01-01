@@ -33,14 +33,14 @@ namespace Biblioteca.Api
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default"), x => x.MigrationsAssembly("Biblioteca.Data")));
             services.AddTransient<IBookService, BookService>();
+            services.AddTransient<IBookAuthorService, BookAuthorService>();
+            services.AddTransient<IBookCategoryService, BookCategoryService>();
             services.AddTransient<IAuthorService, AuthorService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
-            //services.AddTransient<IClientService, ClientService>();
             services.AddTransient<ICheckoutService, CheckoutService>();
             services.AddTransient<ICountryService, CountryService>();
             services.AddTransient<IPaymentService, PaymentService>();
-            //services.AddTransient<ITicketService, TicketService>();
 
             services.AddSwaggerGen();
             services.AddAutoMapper(typeof(Startup));

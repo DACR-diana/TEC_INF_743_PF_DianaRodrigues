@@ -14,6 +14,8 @@ namespace Biblioteca.Core
         #region Books
 
         IBookRepository Books { get; }
+        IBookCategoryRepository BookCategories { get; }
+        IBookAuthorRepository BookAuthors { get; }
         IAuthorRepository Authors { get; }
         ICategoryRepository Categories { get; }
 

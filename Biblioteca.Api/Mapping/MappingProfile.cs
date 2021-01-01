@@ -22,6 +22,8 @@ namespace Biblioteca.Api.Mapping
             CreateMap<Author, AuthorResource>();
             CreateMap<Category, CategoryResource>();
             CreateMap<Book, BookResource>();
+            CreateMap<BookAuthor, BookAuthorResource>();
+            CreateMap<BookCategory, BookCategoryResource>();
             CreateMap<Checkout, CheckoutResource>();
             CreateMap<CheckoutBook, CheckoutBookResource>();
             CreateMap<User, UserResource>();
@@ -35,6 +37,8 @@ namespace Biblioteca.Api.Mapping
             CreateMap<AuthorResource, Author>();
             CreateMap<CategoryResource, Category>();
             CreateMap<BookResource, Book>();
+            CreateMap<BookAuthorResource, BookAuthor>();
+            CreateMap<BookCategoryResource, BookCategory>();
             CreateMap<SaveBookResource, Book>();
             CreateMap<CheckoutResource, Checkout>();
             CreateMap<SaveCheckoutResource, Checkout>();

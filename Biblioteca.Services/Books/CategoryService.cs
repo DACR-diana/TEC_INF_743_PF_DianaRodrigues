@@ -30,5 +30,7 @@ namespace Biblioteca.Services.Books
         {
             return await _unitOfWork.Categories.GetWithBooksByIdAsync(id);
         }
+
+
     }
 }

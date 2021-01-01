@@ -19,6 +19,8 @@ namespace Biblioteca.Data
         private readonly ApiDbContext _context;
 
         private BookRepository _bookRepository;
+        private BookAuthorRepository _bookAuhtorRepository;
+        private BookCategoryRepository _bookCategoryRepository;
         private AuthorRepository _authorRepository;
         private CategoryRepository _categoryRepository;
         private EmployeeRepository _employeeRepository;
@@ -36,6 +38,8 @@ namespace Biblioteca.Data
 
 
         public IBookRepository Books => _bookRepository = _bookRepository ?? new BookRepository(_context);
+        public IBookAuthorRepository BookAuthors => _bookAuhtorRepository = _bookAuhtorRepository ?? new BookAuthorRepository(_context);
+        public IBookCategoryRepository BookCategories => _bookCategoryRepository = _bookCategoryRepository ?? new BookCategoryRepository(_context);
         public IAuthorRepository Authors => _authorRepository = _authorRepository ?? new AuthorRepository(_context);
         public ICategoryRepository Categories => _categoryRepository = _categoryRepository ?? new CategoryRepository(_context);
 
