@@ -66,9 +66,23 @@ namespace Biblioteca.WebApp.Controllers
             return View(categoriesAuthors);
         }
 
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
-            return View();
+            var httpClientHandler = new HttpClientHandler();
+            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            var books = new List<Book>();
+
+            using (HttpClient client = new HttpClient(httpClientHandler))
+            {
+                string endpoint = apiBaseUrl + $"Book/GetAllWithCategoriesAndAuthor";
+                using (var Response = await client.GetAsync(endpoint))
+                {
+                    var result = await Response.Content.ReadAsStringAsync();
+                    books = JsonConvert.DeserializeObject<List<Book>>(result);
+                }
+
+            }
+            return View(books);
         }
 
         public async Task<IActionResult> AddBook()

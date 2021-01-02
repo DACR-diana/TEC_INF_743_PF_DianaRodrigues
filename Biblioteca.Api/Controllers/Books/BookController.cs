@@ -32,7 +32,7 @@ namespace Biblioteca.Api.Controllers.Books
         }
 
 
-        [HttpGet("")]
+        [HttpGet("GetAllWithCategoriesAndAuthor")]
         public async Task<ActionResult<IEnumerable<BookResource>>> GetAllWithCategoriesAndAuthor()
         {
             var books = await _bookService.GetAllWithCategoriesAndAuthor();

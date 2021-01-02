@@ -25,6 +25,7 @@ namespace Biblioteca.Data.Repositories.Books
             return await ApiDbContext.Books
                 .Include(m => m.BookCategories)
                 .Include(m => m.BookAuthors)
+                .Include(m => m.Country)
                 .ToListAsync();
         }
 
@@ -33,6 +34,7 @@ namespace Biblioteca.Data.Repositories.Books
             return await ApiDbContext.Books
               .Include(m => m.BookCategories)
                 .Include(m => m.BookAuthors)
+                .Include(m => m.Country)
                 .SingleOrDefaultAsync(m => m.Id == id); ;
         }
 
