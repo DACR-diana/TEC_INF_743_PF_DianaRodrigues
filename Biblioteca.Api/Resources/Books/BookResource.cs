@@ -11,8 +11,8 @@ namespace Biblioteca.Api.Resources.Books
         public int ISBN { get; set; }
         public string Title { get; set; }
         public CountryResource Country { get; set; }
-        public ICollection<AuthorResource> Authors { get; set; }
+        public ICollection<BookAuthorResource> BookAuthors { get; set; }
         public bool State { get; set; }
-        public ICollection<CategoryResource> Categories { get; set; }
+        public ICollection<BookCategoryResource> BookCategories { get; set; }
     }
 }

@@ -40,8 +40,16 @@ namespace Biblioteca.Api.Controllers.Books
             return Ok(booksResource);
         }
 
+        [HttpGet("GetWithCategoriesAndAuthorById/{id}")]
+        public async Task<ActionResult<BookResource>> GetWithCategoriesAndAuthorById(int id)
+        {
+            var book = await _bookService.GetWithCategoriesAndAuthorById(id);
+            var bookResource = _mapper.Map<Book, BookResource>(book);
+            return Ok(bookResource);
+        }
+
         [HttpPost("CreateBook")]
-        public async Task<ActionResult<BookResource>> CreateBook(SaveBookResource saveBookResource) // object coming from requests body
+        public async Task<ActionResult<BookResource>> CreateBook(SaveBookResource saveBookResource)
         {
             var validator = new SaveBookResourceValidator();
             var validationResult = await validator.ValidateAsync(saveBookResource);

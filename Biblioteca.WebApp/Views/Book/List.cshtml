@@ -2,8 +2,12 @@
     Layout = "_Layout";
 }
 
+
+
 @section Styles {
     <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+
 }
 <div class="row">
     <div class="col-12">
@@ -13,9 +17,10 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
+                <table id="example2" class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th>ISBN</th>
                             <th>Titulo</th>
                             <th>País</th>
@@ -23,9 +28,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var book in Model)
+                        @foreach (var book in ViewBag.Books.Value)
                         {
-                            <tr>
+                            <tr onclick="location.href='@(Url.Action("Update", "Book", new { id = book.Id }))'">
+                                <td>@book.Id</td>
                                 <td>@book.ISBN</td>
                                 <td>@book.Title</td>
                                 <td>@book.Country.Name</td>
@@ -33,32 +39,48 @@
 
                             </tr>
                         }
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.card-body -->
+                    </tbody>
+                </table>
             </div>
-            <!-- /.card -->
+            <!-- /.card-body -->
         </div>
-        <!-- /.col -->
+        <!-- /.card -->
     </div>
+    <!-- /.col -->
+</div>
 
-    @section Scripts {
-        <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-        <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+@section Scripts {
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 
-        <script>
-            $(function () {
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                });
+    <script>
+        $(function () {
+
+            var table=$('#example2').DataTable();
+            @*$('#example2 tbody').on('click', 'tr', function () {
+                console.log(table.row(this).data()[0])
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("Update")",
+                    data: { "id": table.row(this).data()[0] },
+                    success: function (response) {
+
+                        console.log(response.url)
+                        //window.location = response.url;
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });*@
+
+                //$(this).toggleClass('selected');
             });
-        </script>
-    }
+
+        });
+    </script>
+}
