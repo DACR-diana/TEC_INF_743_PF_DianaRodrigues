@@ -71,5 +71,14 @@ namespace Biblioteca.Api.Controllers.Users
             return Ok(clientResource);
         }
 
+
+        [HttpGet("GetAllWithCheckout")]
+        public async Task<ActionResult<IEnumerable<ClientResource>>> GetAllWithCheckout()
+        {
+            var clients = await _clientService.GetAllWithCheckout();
+            var clientsResource = _mapper.Map<IEnumerable<Client>, IEnumerable<ClientResource>>(clients);
+            return Ok(clientsResource);
+        }
+
     }
 }

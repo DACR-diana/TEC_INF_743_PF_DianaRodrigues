@@ -9,5 +9,6 @@ namespace Biblioteca.Core.Repositories.Users
     public interface IClientRepository : IRepository<Client>
     {
         Task<Client> GetWithCheckoutByEmailAsync(string email);
+        Task<IEnumerable<Client>> GetAllWithCheckoutAsync();
     }
 }

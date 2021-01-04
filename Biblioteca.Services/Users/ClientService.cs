@@ -21,6 +21,11 @@ namespace Biblioteca.Services.Users
             return await _unitOfWork.Clients.GetWithCheckoutByEmailAsync(email);
         }
 
+        public async Task<IEnumerable<Client>> GetAllWithCheckout()
+        {
+            return await _unitOfWork.Clients.GetAllWithCheckoutAsync();
+        }
+
         public async Task<Client> CreateClient(Client newClient)
         {
             await _unitOfWork.Clients.AddAsync(newClient);

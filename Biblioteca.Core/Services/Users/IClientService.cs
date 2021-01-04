@@ -9,7 +9,7 @@ namespace Biblioteca.Core.Services.Users
     public interface IClientService
     {
         Task<Client> GetWithCheckoutByEmail(string email);
-
+        Task<IEnumerable<Client>> GetAllWithCheckout();
 
         Task<Client> CreateClient(Client newClient);
         Task UpdateClient(Client clientToBeUpdated, Client client);

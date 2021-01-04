@@ -41,6 +41,7 @@ namespace Biblioteca.Api
             services.AddTransient<ICheckoutService, CheckoutService>();
             services.AddTransient<ICountryService, CountryService>();
             services.AddTransient<IPaymentService, PaymentService>();
+            services.AddTransient<IClientService, ClientService>();
 
             services.AddSwaggerGen();
             services.AddAutoMapper(typeof(Startup));

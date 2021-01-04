@@ -23,8 +23,13 @@ namespace Biblioteca.Data.Repositories.Users
         public async Task<Client> GetWithCheckoutByEmailAsync(string email)
         {
             return await ApiDbContext.Clients
-                .Include(m => m.Checkouts)
                 .SingleOrDefaultAsync(m => m.Email == email);
+        }
+
+        public async Task<IEnumerable<Client>> GetAllWithCheckoutAsync()
+        {
+            return await ApiDbContext.Clients
+                .ToListAsync();
         }
     }
 }

@@ -1,0 +1,93 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+
+}
+@*<div class="row" style="padding-top: 40px;">
+    <div class="col-12">
+        <div class="form-group" style="display: flex;">
+            <div class="custom-control custom-radio" style="margin: 10px;">
+                <input class="custom-control-input" onclick="FilterTable(true)" checked type="radio" id="customRadio1" name="customRadio">
+                <label for="customRadio1" class="custom-control-label">Ativos</label>
+            </div>
+            <div class="custom-control custom-radio" style="margin: 10px;">
+                <input class="custom-control-input" onclick="FilterTable(false)" type="radio" id="customRadio2" name="customRadio">
+                <label for="customRadio2" class="custom-control-label">Inativos</label>
+            </div>
+        </div>
+    </div>
+</div>*@
+<div class="row" style="padding-top: 40px;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Lista de Clientes</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <table id="example2" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>NIF</th>
+                            <th>Email</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in ViewBag.Users.Value)
+                        {
+                            <tr onclick="location.href='@(Url.Action("Update", "User", new { email = user.Email }))'">
+                                <td>@user.Id</td>
+                                <td>@user.Name</td>
+                                <td>@user.NIF</td>
+                                <td>@user.Email</td>
+                                <td>@(user.State == true ? "Ativo" : "Inativo" )</td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.col -->
+</div>
+
+@section Scripts {
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+
+    <script>
+        $(function () {
+            $('#example2').DataTable();
+        });
+
+        @*function FilterTable(filter) {
+            $('#example2').dataTable().fnDestroy();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("FilterTable")",
+                data: { filter: filter },
+                dataType: "json",
+                success: function (data) {
+                    $('#example2').html("");
+                    $('#example2').html(data);
+                    $('#example2').DataTable();
+                },
+                error: function (req, status, error) {
+                    console.log(error);
+                }
+            });
+        }*@
+
+    </script>
+}
