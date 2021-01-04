@@ -31,6 +31,11 @@ namespace Biblioteca.Services.Books
             return await _unitOfWork.Books.GetWithCategoriesAndAuthorByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Book>> GetAllByState(bool state)
+        {
+            return await _unitOfWork.Books.GetAllByStateAsync(state);
+        }
+
         public async Task<Book> CreateBook(Book newBook)
         {
             await _unitOfWork.Books.AddAsync(newBook);

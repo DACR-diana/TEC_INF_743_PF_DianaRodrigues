@@ -48,6 +48,14 @@ namespace Biblioteca.Api.Controllers.Books
             return Ok(bookResource);
         }
 
+        [HttpGet("GetAllByState/{state}")]
+        public async Task<ActionResult<IEnumerable<Book>>> GetAllByState(bool state)
+        {
+            var book = await _bookService.GetAllByState(state);
+            var bookResource = _mapper.Map<IEnumerable<Book>, IEnumerable<BookResource>>(book);
+            return Ok(bookResource);
+        }
+
         [HttpPost("CreateBook")]
         public async Task<ActionResult<BookResource>> CreateBook(SaveBookResource saveBookResource)
         {

@@ -10,6 +10,7 @@ namespace Biblioteca.Core.Services.Books
     {
         Task<IEnumerable<Book>> GetAllWithCategoriesAndAuthor();
         Task<Book> GetWithCategoriesAndAuthorById(int id);
+        Task<IEnumerable<Book>> GetAllByState(bool state);
 
 
         Task<Book> CreateBook(Book newBook);

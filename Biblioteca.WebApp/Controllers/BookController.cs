@@ -101,7 +101,8 @@ namespace Biblioteca.WebApp.Controllers
 
             using (HttpClient client = new HttpClient(httpClientHandler))
             {
-                string endpoint = apiBaseUrl + $"Book/GetAllWithCategoriesAndAuthor";
+                string endpoint = $"{apiBaseUrl}Book/GetAllByState/{true}";
+                //string endpoint = apiBaseUrl + $"Book/GetAllWithCategoriesAndAuthor";
                 using (var Response = await client.GetAsync(endpoint))
                 {
                     var result = await Response.Content.ReadAsStringAsync();
@@ -110,6 +111,50 @@ namespace Biblioteca.WebApp.Controllers
 
             }
             return new JsonResult(books);
+        }
+
+        //[HttpGet("")]
+        public async Task<JsonResult> FilterTable(string filter)
+        {
+
+
+            var httpClientHandler = new HttpClientHandler();
+            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            var books = new List<Book>();
+
+            using (HttpClient client = new HttpClient(httpClientHandler))
+            {
+                string endpoint = $"{apiBaseUrl}Book/GetAllByState/{filter}";
+                using (var Response = await client.GetAsync(endpoint))
+                {
+                    var result = await Response.Content.ReadAsStringAsync();
+                    books = JsonConvert.DeserializeObject<List<Book>>(result);
+                }
+
+            }
+
+            string html = @"<thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>ISBN</th>
+                            <th>Titulo</th>
+                            <th>País</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+
+            foreach (var book in books)
+            {
+                html += @"<tr onclick=location.href='/Book/Update/"+book.Id+"'><td> " + book.Id + " </td><td> " + book.ISBN + " </td><td> " + book.Title + " </td><td> " + book.Country.Name + " </td>";
+
+                html += book.State == true ? "<td>Ativo</td>" : "<td>Inativo</td>";
+                html += "</tr>";
+            }
+
+            html += @"</tbody>";
+
+            return new JsonResult(html);
         }
 
         private async Task<JsonResult> GetBook(int id)
@@ -138,7 +183,7 @@ namespace Biblioteca.WebApp.Controllers
         public async Task<IActionResult> Update(int id)
         {
             ViewBag.Book = await GetBook(id);
-            HttpContext.Session.SetString("bookId",id.ToString());
+            HttpContext.Session.SetString("bookId", id.ToString());
             AddViewModel categoriesAuthors = new AddViewModel()
             {
                 categories = await GetCategories(),
@@ -237,10 +282,10 @@ namespace Biblioteca.WebApp.Controllers
             var categories = Request.Form["categories"];
             var authors = Request.Form["authors"];
             var country = Request.Form["country"];
-            var state= Request.Form["customSwitch3"];
+            var state = Request.Form["customSwitch3"];
 
             if (Request.Form["customSwitch3"].Count > 1)
-                 state = Request.Form["customSwitch3"][0];
+                state = Request.Form["customSwitch3"][0];
 
             if (categories.Count == 0 || authors.Count == 0 || country.Count == 0)
                 return ErrorMessage();
