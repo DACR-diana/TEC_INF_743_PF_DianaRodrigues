@@ -25,7 +25,6 @@ namespace Biblioteca.WebApp.Controllers
             apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl");
         }
 
-
         public IActionResult ErrorMessage()
         {
             return Content("Ocorreu algum erro");
@@ -113,7 +112,6 @@ namespace Biblioteca.WebApp.Controllers
             return new JsonResult(books);
         }
 
-        //[HttpGet("")]
         public async Task<JsonResult> FilterTable(string filter)
         {
 

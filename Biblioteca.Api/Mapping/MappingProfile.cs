@@ -46,6 +46,7 @@ namespace Biblioteca.Api.Mapping
             CreateMap<UserResource, User>();
             CreateMap<EmployeeResource, Employee>();
             CreateMap<ClientResource, Client>();
+            CreateMap<SaveClientResource, Client>();
             CreateMap<CountryResource, Country>();
             CreateMap<PaymentResource, Payment>();
 

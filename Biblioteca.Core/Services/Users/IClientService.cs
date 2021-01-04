@@ -8,11 +8,10 @@ namespace Biblioteca.Core.Services.Users
 {
     public interface IClientService
     {
-        Task<IEnumerable<Client>> GetWithCheckoutByEmailAsync(string email);
+        Task<Client> GetWithCheckoutByEmail(string email);
 
 
         Task<Client> CreateClient(Client newClient);
         Task UpdateClient(Client clientToBeUpdated, Client client);
-        //Task DeleteClient(Client client);
     }
 }
