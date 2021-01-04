@@ -14,8 +14,8 @@ namespace Biblioteca.Api.Controllers.Books
     [Route("api/[controller]")]
     [ApiController]
     public class BookController : Controller
-    { 
-        
+    {
+
         // Dependency Injection
         private readonly IBookService _bookService;
         private readonly IBookCategoryService _bookCategoryService;
@@ -61,7 +61,8 @@ namespace Biblioteca.Api.Controllers.Books
 
             var newBook = await _bookService.CreateBook(bookToCreate);
 
-            foreach(var author in saveBookResource.Authors){
+            foreach (var author in saveBookResource.Authors)
+            {
                 BookAuthorResource bookAuthorResource = new BookAuthorResource();
                 bookAuthorResource.AuthorId = author.Id;
                 bookAuthorResource.BookId = newBook.Id;
@@ -81,6 +82,58 @@ namespace Biblioteca.Api.Controllers.Books
             }
 
             var databaseBooks = await _bookService.GetWithCategoriesAndAuthorById(newBook.Id);
+
+            return Ok(_mapper.Map<Book, BookResource>(databaseBooks));
+        }
+
+        [HttpPost("UpdateBook")]
+        public async Task<ActionResult<BookResource>> UpdateBook(SaveBookResource saveBookResource)
+        {
+            var validator = new SaveBookResourceValidator();
+            var validationResult = await validator.ValidateAsync(saveBookResource);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var bookToCreate = _mapper.Map<SaveBookResource, Book>(saveBookResource);
+
+            await _bookService.UpdateBook(bookToCreate, bookToCreate);
+
+            // Delete from reference table all Book-Authors
+            var bookAuthorsToDelete = await _bookAuhtorService.GetBookAuthorById(saveBookResource.Id);
+
+            foreach (var authorToDelete in bookAuthorsToDelete)
+                await _bookAuhtorService.DeleteBookAuthor(authorToDelete);
+
+            // Add to reference table all Book-Authors
+            foreach (var author in saveBookResource.Authors)
+            {
+                BookAuthorResource bookAuthorResource = new BookAuthorResource();
+                bookAuthorResource.AuthorId = author.Id;
+                bookAuthorResource.BookId = saveBookResource.Id;
+
+                var bookAuthorToAdd = _mapper.Map<BookAuthorResource, BookAuthor>(bookAuthorResource);
+                var newBookAuthor = await _bookAuhtorService.CreateBookAuthor(bookAuthorToAdd);
+            }
+
+
+            // Delete from reference table all Book-Categories
+            var bookCategoryToDelete = await _bookCategoryService.GetBookCategoryById(saveBookResource.Id);
+            foreach (var categoryToDelete in bookCategoryToDelete)
+                await _bookCategoryService.DeleteBookCategory(categoryToDelete);
+
+            // Add to reference table all Book-Categories
+            foreach (var category in saveBookResource.Categories)
+            {
+                BookCategoryResource bookCategoryResource = new BookCategoryResource();
+                bookCategoryResource.CategoryId = category.Id;
+                bookCategoryResource.BookId = saveBookResource.Id;
+
+                var bookCategoryToCreate = _mapper.Map<BookCategoryResource, BookCategory>(bookCategoryResource);
+                var newBookCategory = await _bookCategoryService.CreateBookCategory(bookCategoryToCreate);
+            }
+
+            var databaseBooks = await _bookService.GetWithCategoriesAndAuthorById(saveBookResource.Id);
 
             return Ok(_mapper.Map<Book, BookResource>(databaseBooks));
         }

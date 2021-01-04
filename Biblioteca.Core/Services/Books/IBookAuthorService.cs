@@ -10,5 +10,6 @@ namespace Biblioteca.Core.Services.Books
     {
         Task<BookAuthor> CreateBookAuthor(BookAuthor newBookAuthor);
         Task DeleteBookAuthor(BookAuthor bookAuthor);
+        Task<IEnumerable<BookAuthor>> GetBookAuthorById(int bookId);
     }
 }

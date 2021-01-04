@@ -43,8 +43,10 @@ namespace Biblioteca.Services.Books
         {
             bookToBeUpdated.CountryId = book.CountryId;
             bookToBeUpdated.Title = book.Title;
-            bookToBeUpdated.State= book.State;
+            bookToBeUpdated.State = book.State;
+            bookToBeUpdated.ISBN = book.ISBN;
 
+            _unitOfWork.Books.UpdateAsync(bookToBeUpdated);
             await _unitOfWork.CommitAsync();
         }
     }

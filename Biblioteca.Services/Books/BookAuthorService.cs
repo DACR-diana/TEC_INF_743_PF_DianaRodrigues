@@ -21,7 +21,10 @@ namespace Biblioteca.Services.Books
             await _unitOfWork.CommitAsync();
             return newBookAuhtor;
         }
-
+        public async Task<IEnumerable<BookAuthor>> GetBookAuthorById(int bookId)
+        {
+            return await _unitOfWork.BookAuthors.GetBookAuthorByIdAsync(bookId);
+        }
 
         public async Task DeleteBookAuthor(BookAuthor bookAuthor)
         {

@@ -8,6 +8,7 @@ namespace Biblioteca.Core.Services.Books
 {
     public interface IBookCategoryService
     {
+        Task<IEnumerable<BookCategory>> GetBookCategoryById(int id);
         Task<BookCategory> CreateBookCategory(BookCategory newBookCategory);
         Task DeleteBookCategory(BookCategory bookCategory);
     }

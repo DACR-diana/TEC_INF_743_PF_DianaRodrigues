@@ -21,6 +21,10 @@ namespace Biblioteca.Services.Books
             await _unitOfWork.CommitAsync();
             return newBookCategory;
         }
+        public async Task<IEnumerable<BookCategory>> GetBookCategoryById(int bookId)
+        {
+            return await _unitOfWork.BookCategories.GetBookCategoryByIdAsync(bookId);
+        }
 
 
         public async Task DeleteBookCategory(BookCategory bookCategory)

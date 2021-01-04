@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Biblioteca.WebApp.Models;
 using Biblioteca.WebApp.Models.Books;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -23,7 +24,7 @@ namespace Biblioteca.WebApp.Controllers
 
             apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl");
         }
-      
+
 
         public IActionResult ErrorMessage()
         {
@@ -137,6 +138,7 @@ namespace Biblioteca.WebApp.Controllers
         public async Task<IActionResult> Update(int id)
         {
             ViewBag.Book = await GetBook(id);
+            HttpContext.Session.SetString("bookId",id.ToString());
             AddViewModel categoriesAuthors = new AddViewModel()
             {
                 categories = await GetCategories(),
@@ -235,6 +237,10 @@ namespace Biblioteca.WebApp.Controllers
             var categories = Request.Form["categories"];
             var authors = Request.Form["authors"];
             var country = Request.Form["country"];
+            var state= Request.Form["customSwitch3"];
+
+            if (Request.Form["customSwitch3"].Count > 1)
+                 state = Request.Form["customSwitch3"][0];
 
             if (categories.Count == 0 || authors.Count == 0 || country.Count == 0)
                 return ErrorMessage();
@@ -247,10 +253,11 @@ namespace Biblioteca.WebApp.Controllers
                 {
 
                     Book book = new Book();
+                    book.Id = int.Parse(HttpContext.Session.GetString("bookId"));
                     book.CountryId = int.Parse(country);
                     book.ISBN = int.Parse(isbn);
                     book.Title = title;
-                    book.State = true;
+                    book.State = bool.Parse(state);
 
                     List<Author> authorsList = new List<Author>();
                     List<Category> categoriesList = new List<Category>();
@@ -266,18 +273,15 @@ namespace Biblioteca.WebApp.Controllers
                     book.Categories = categoriesList;
 
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
-                    string endpoint = apiBaseUrl + $"Book/CreateBook";
+                    string teste = JsonConvert.SerializeObject(book);
+                    string endpoint = apiBaseUrl + $"Book/UpdateBook";
                     using (var Response = await client.PostAsync(endpoint, content))
                     {
                         if (Response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
                             return await List();
-
-                        }
                         else
                         {
                             ModelState.Clear();
-                            //ModelState.AddModelError(string.Empty, "Username or Password is Incorrect");
                             return ErrorMessage();
                         }
 
@@ -286,7 +290,5 @@ namespace Biblioteca.WebApp.Controllers
             }
         }
         #endregion
-
-
     }
 }

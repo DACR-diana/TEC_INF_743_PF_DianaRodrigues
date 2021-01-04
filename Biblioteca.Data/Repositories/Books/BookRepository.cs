@@ -37,16 +37,5 @@ namespace Biblioteca.Data.Repositories.Books
                 .Include(m => m.Country)
                 .SingleOrDefaultAsync(m => m.Id == id); ;
         }
-
-        //public async Task<IEnumerable<Book>> GetAllWithCategoriesAndAuthorByAuthorIdAsync(int authorId)
-        //{
-        //    return await ApiDbContext.Books
-        //       .Include(m => m.BookCategories)
-        //        .Include(m => m.BookAuthors)
-        //        .Where(m => m.BookAuthors. == authorId)
-        //        .ToListAsync();
-        //}
-
-
     }
 }

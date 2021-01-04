@@ -13,7 +13,6 @@
         <form method="post" enctype="multipart/form-data" asp-controller="Book" asp-action="SaveBook">
             <div class="row">
                 <div class="col-sm-6">
-                    <!-- text input -->
                     <div class="form-group">
                         <label>Título</label>
                         <input type="text" value="@ViewBag.Book.Value.Title" class="form-control" name="title" placeholder="...">
@@ -25,6 +24,7 @@
                         <input type="text" value="@ViewBag.Book.Value.ISBN" class="form-control" name="ISBN" placeholder="...">
                     </div>
                 </div>
+               
             </div>
             <div class="row">
                 <div class="col-sm-12">
@@ -92,7 +92,7 @@
                                         <option selected value="@author.Id">@author.Name</option>
                                         authorsIds.Add(@author.Id);
                                     }
-                                  
+
                                 }
 
                                 if (!authorsIds.Contains(author.Id))
@@ -104,9 +104,38 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                            @if (ViewBag.Book.Value.State)
+                            {
+                                @Html.CheckBox("customSwitch3", true)
+                                @*<input type="checkbox" checked onclick="@ViewData["State"]=true" class="custom-control-input" id="customSwitch3">*@
+
+                            }
+                            else
+                            {
+                                @Html.CheckBox("customSwitch3", false)
+                                @*<input type="checkbox" onclick="@ViewData["State"]=false" class="custom-control-input" id="customSwitch3">*@
+
+                            }
+                            <label class="custom-control-label" for="customSwitch3">Ativar/Inativar</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="card-footer">
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </form>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#customSwitch3").addClass("custom-control-input");
+        });
+    </script>
+}
