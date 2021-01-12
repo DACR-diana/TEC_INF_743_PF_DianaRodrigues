@@ -21,8 +21,6 @@ namespace Biblioteca.Core
 
         #endregion
 
-
-
         #region Users
         IClientRepository Clients { get; }
         IEmployeeRepository Employees { get; }

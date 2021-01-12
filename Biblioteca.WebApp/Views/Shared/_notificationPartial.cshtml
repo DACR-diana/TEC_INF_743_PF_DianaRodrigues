@@ -1,0 +1,23 @@
+﻿
+<!-- jQuery -->
+<script src="~/plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="~/plugins/jquery-ui/jquery-ui.min.js"></script>
+
+<script>
+    var msg = @(TempData["Message"]!=null? Html.Raw(TempData["Message"]) : Html.Raw("undefined"));
+
+    console.log(msg)
+
+    if (msg) {
+        if (msg.provider == "sweetAlert") {
+            swal.fire({
+                title: msg.title,
+                text: msg.message,
+                icon: msg.icon
+            });
+        } else {
+            toastr[msg.type](msg.message, msg.title);
+        }
+    }
+</script>

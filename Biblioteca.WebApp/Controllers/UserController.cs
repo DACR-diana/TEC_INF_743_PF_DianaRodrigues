@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Biblioteca.WebApp.Helpers;
 using Biblioteca.WebApp.Models.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,12 @@ namespace Biblioteca.WebApp.Controllers
     {
         private string apiBaseUrl;
         private IConfiguration _Configure;
+        private readonly IHttpClientHelper _clientClientHelper;
 
-        public UserController(IConfiguration configuration)
+        public UserController(IConfiguration configuration, IHttpClientHelper clientClientHelper)
         {
             _Configure = configuration;
-
+            _clientClientHelper = clientClientHelper;
             apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl");
         }
 
@@ -31,15 +33,18 @@ namespace Biblioteca.WebApp.Controllers
             var httpClientHandler = new HttpClientHandler();
             httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             Client client = new Client();
-
             using (HttpClient httpClient = new HttpClient(httpClientHandler))
             {
-                string endpoint = $"{apiBaseUrl}Client/GetWithCheckoutByEmail/{email}";
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Client/GetWithCheckoutByEmail/{email}";
 
                 using (var Response = await httpClient.GetAsync(endpoint))
                 {
                     var result = await Response.Content.ReadAsStringAsync();
                     client = JsonConvert.DeserializeObject<Client>(result);
+                    HttpContext.Session.SetString("clientEmail", email);
+                    HttpContext.Session.SetString("clientId", client.Id.ToString());
+                    HttpContext.Session.SetString("clientName", client.Name);
+
                 }
 
             }
@@ -54,7 +59,7 @@ namespace Biblioteca.WebApp.Controllers
 
             using (HttpClient client = new HttpClient(httpClientHandler))
             {
-                string endpoint = $"{apiBaseUrl}Client/GetAllWithCheckout";
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Client/GetAllWithCheckout";
                 using (var Response = await client.GetAsync(endpoint))
                 {
                     var result = await Response.Content.ReadAsStringAsync();
@@ -78,11 +83,25 @@ namespace Biblioteca.WebApp.Controllers
         {
             return RedirectToRoute(new { Controller = "Checkout", Action = "Add" });
         }
+
+        public IActionResult GoToCheckoutUserView()
+        {
+            return RedirectToRoute(new { Controller = "Checkout", Action = "CheckoutUser" });
+        }
+
         public async Task<IActionResult> Update(string email)
         {
-            ViewBag.User = await GetUser(email);
-            HttpContext.Session.SetString("clientEmail", email);
 
+            var result = await GetUser(email);
+
+            var json = JsonConvert.SerializeObject(result.Value);
+            var client = JsonConvert.DeserializeObject<Client>(json);
+
+            ViewBag.User = result;
+
+
+
+            HttpContext.Session.SetString("clientId", client.Id.ToString());
             return View();
         }
 
@@ -124,13 +143,18 @@ namespace Biblioteca.WebApp.Controllers
                     client.State = true;
                     client.Registration = DateTime.Now;
 
-
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(client), Encoding.UTF8, "application/json");
-                    string endpoint = $"{apiBaseUrl}Client/CreateClient";
+                    string teste = JsonConvert.SerializeObject(client);
+                    string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Client/CreateClient";
                     using (var Response = await httpClient.PostAsync(endpoint, content))
                     {
                         if (Response.StatusCode == System.Net.HttpStatusCode.OK)
                         {
+                            var result = await Response.Content.ReadAsStringAsync();
+                            var clientDatabase = JsonConvert.DeserializeObject<Client>(result);
+
+                            HttpContext.Session.SetString("clientName", name);
+                            HttpContext.Session.SetString("clientId", clientDatabase.Id.ToString());
                             return GoToCheckoutAddView();
                         }
                         else
@@ -170,7 +194,7 @@ namespace Biblioteca.WebApp.Controllers
                     client.State = bool.Parse(state);
 
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(client), Encoding.UTF8, "application/json");
-                    string endpoint = apiBaseUrl + $"Client/UpdateClient";
+                    string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Client/UpdateClient";
                     using (var Response = await httpClient.PostAsync(endpoint, content))
                     {
                         if (Response.StatusCode == System.Net.HttpStatusCode.OK)

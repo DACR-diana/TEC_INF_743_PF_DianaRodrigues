@@ -4,11 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Biblioteca.WebApp.Helpers;
 using Biblioteca.WebApp.Models;
 using Biblioteca.WebApp.Models.Books;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 
 namespace Biblioteca.WebApp.Controllers
@@ -17,18 +19,39 @@ namespace Biblioteca.WebApp.Controllers
     {
         private string apiBaseUrl;
         private IConfiguration _Configure;
+        private readonly IHttpClientHelper _clientClientHelper;
 
-        public BookController(IConfiguration configuration)
+        public BookController(IConfiguration configuration, IHttpClientHelper clientClientHelper)
         {
             _Configure = configuration;
+            _clientClientHelper = clientClientHelper;
 
             apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl");
+
         }
 
         public IActionResult ErrorMessage()
         {
             return Content("Ocorreu algum erro");
         }
+
+
+        //#region LOCALIZATION
+        //private async Task<IActionResult> GetContent(string lang)
+        //{
+        //    var request = new HttpRequestMessage(HttpMethod.Get, $"{apiBaseUrl}{lang}/Book/GetBookLanguageContent");
+        //    var client = _clientFactory.CreateClient();
+        //    var response = await client.SendAsync(request);
+
+        //    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        //    {
+        //        var responseStream = response.Content.ReadAsStreamAsync();
+        //        return Ok(responseStream);
+        //    }
+        //    else
+        //        return ErrorMessage();
+        //}
+        //#endregion
 
         #region GET
 
@@ -42,7 +65,7 @@ namespace Biblioteca.WebApp.Controllers
             using (HttpClient client = new HttpClient(httpClientHandler))
             {
 
-                string endpoint = apiBaseUrl + $"Country/GetAllCountries";
+                string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Country/GetAllCountries";
                 using (var Response = await client.GetAsync(endpoint))
                 {
                     var result = await Response.Content.ReadAsStringAsync();
@@ -62,7 +85,7 @@ namespace Biblioteca.WebApp.Controllers
             using (HttpClient client = new HttpClient(httpClientHandler))
             {
 
-                string endpoint = apiBaseUrl + $"Author/GetAllAuthors";
+                string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Author/GetAllAuthors";
                 using (var Response = await client.GetAsync(endpoint))
                 {
                     var result = await Response.Content.ReadAsStringAsync();
@@ -82,7 +105,7 @@ namespace Biblioteca.WebApp.Controllers
             using (HttpClient client = new HttpClient(httpClientHandler))
             {
 
-                string endpoint = $"{apiBaseUrl}Category/GetAllCategories";
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Category/GetAllCategories";
                 using (var Response = await client.GetAsync(endpoint))
                 {
                     var result = await Response.Content.ReadAsStringAsync();
@@ -100,7 +123,7 @@ namespace Biblioteca.WebApp.Controllers
 
             using (HttpClient client = new HttpClient(httpClientHandler))
             {
-                string endpoint = $"{apiBaseUrl}Book/GetAllByState/{true}";
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{true}";
                 //string endpoint = apiBaseUrl + $"Book/GetAllWithCategoriesAndAuthor";
                 using (var Response = await client.GetAsync(endpoint))
                 {
@@ -122,7 +145,7 @@ namespace Biblioteca.WebApp.Controllers
 
             using (HttpClient client = new HttpClient(httpClientHandler))
             {
-                string endpoint = $"{apiBaseUrl}Book/GetAllByState/{filter}";
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{filter}";
                 using (var Response = await client.GetAsync(endpoint))
                 {
                     var result = await Response.Content.ReadAsStringAsync();
@@ -144,7 +167,7 @@ namespace Biblioteca.WebApp.Controllers
 
             foreach (var book in books)
             {
-                html += @"<tr onclick=location.href='/Book/Update/"+book.Id+"'><td> " + book.Id + " </td><td> " + book.ISBN + " </td><td> " + book.Title + " </td><td> " + book.Country.Name + " </td>";
+                html += @"<tr onclick=location.href='/Book/Update/" + book.Id + "'><td> " + book.Id + " </td><td> " + book.ISBN + " </td><td> " + book.Title + " </td><td> " + book.Country.Name + " </td>";
 
                 html += book.State == true ? "<td>Ativo</td>" : "<td>Inativo</td>";
                 html += "</tr>";
@@ -163,7 +186,7 @@ namespace Biblioteca.WebApp.Controllers
 
             using (HttpClient client = new HttpClient(httpClientHandler))
             {
-                string endpoint = $"{apiBaseUrl}Book/GetWithCategoriesAndAuthorById/{id}";
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetWithCategoriesAndAuthorById/{id}";
 
                 using (var Response = await client.GetAsync(endpoint))
                 {
@@ -207,10 +230,6 @@ namespace Biblioteca.WebApp.Controllers
             return View(categoriesAuthors);
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
         #endregion
 
         #region Actions
@@ -253,7 +272,7 @@ namespace Biblioteca.WebApp.Controllers
                     book.Categories = categoriesList;
 
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
-                    string endpoint = apiBaseUrl + $"Book/CreateBook";
+                    string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Book/CreateBook";
                     using (var Response = await client.PostAsync(endpoint, content))
                     {
                         if (Response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -317,7 +336,7 @@ namespace Biblioteca.WebApp.Controllers
 
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
                     string teste = JsonConvert.SerializeObject(book);
-                    string endpoint = apiBaseUrl + $"Book/UpdateBook";
+                    string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Book/UpdateBook";
                     using (var Response = await client.PostAsync(endpoint, content))
                     {
                         if (Response.StatusCode == System.Net.HttpStatusCode.OK)

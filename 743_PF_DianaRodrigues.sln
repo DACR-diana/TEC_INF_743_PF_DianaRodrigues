@@ -5,15 +5,17 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{0298A3CF-E9F5-4DD3-80F2-900CEF06D537}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biblioteca.WebApp", "Biblioteca.WebApp\Biblioteca.WebApp.csproj", "{F55D5A67-C6ED-4BB7-B17F-89758301BBB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca.WebApp", "Biblioteca.WebApp\Biblioteca.WebApp.csproj", "{F55D5A67-C6ED-4BB7-B17F-89758301BBB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biblioteca.Api", "Biblioteca.Api\Biblioteca.Api.csproj", "{66A201AB-2D18-49E8-A97B-6020EDDA565B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca.Api", "Biblioteca.Api\Biblioteca.Api.csproj", "{66A201AB-2D18-49E8-A97B-6020EDDA565B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biblioteca.Core", "Biblioteca.Core\Biblioteca.Core.csproj", "{DFD0974C-68B0-41E5-8822-034895FD08AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca.Core", "Biblioteca.Core\Biblioteca.Core.csproj", "{DFD0974C-68B0-41E5-8822-034895FD08AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biblioteca.Data", "Biblioteca.Data\Biblioteca.Data.csproj", "{DA3A7BE3-D5B7-4195-8950-1A7BAEF3A96C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca.Data", "Biblioteca.Data\Biblioteca.Data.csproj", "{DA3A7BE3-D5B7-4195-8950-1A7BAEF3A96C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biblioteca.Services", "Biblioteca.Services\Biblioteca.Services.csproj", "{F75A901A-B1DF-49D2-93E1-E40455B2B482}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca.Services", "Biblioteca.Services\Biblioteca.Services.csproj", "{F75A901A-B1DF-49D2-93E1-E40455B2B482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biblioteca.Localization", "Biblioteca.Localization\Biblioteca.Localization.csproj", "{A226E823-70C4-42BD-9DCB-822985447B6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{F75A901A-B1DF-49D2-93E1-E40455B2B482}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F75A901A-B1DF-49D2-93E1-E40455B2B482}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F75A901A-B1DF-49D2-93E1-E40455B2B482}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A226E823-70C4-42BD-9DCB-822985447B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A226E823-70C4-42BD-9DCB-822985447B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A226E823-70C4-42BD-9DCB-822985447B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A226E823-70C4-42BD-9DCB-822985447B6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 		{DFD0974C-68B0-41E5-8822-034895FD08AE} = {0298A3CF-E9F5-4DD3-80F2-900CEF06D537}
 		{DA3A7BE3-D5B7-4195-8950-1A7BAEF3A96C} = {0298A3CF-E9F5-4DD3-80F2-900CEF06D537}
 		{F75A901A-B1DF-49D2-93E1-E40455B2B482} = {0298A3CF-E9F5-4DD3-80F2-900CEF06D537}
+		{A226E823-70C4-42BD-9DCB-822985447B6A} = {0298A3CF-E9F5-4DD3-80F2-900CEF06D537}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B36F59B5-269D-4E10-A811-3B7B49554ABE}

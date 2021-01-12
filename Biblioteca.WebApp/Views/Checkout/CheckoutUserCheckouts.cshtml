@@ -1,0 +1,90 @@
+﻿
+@{
+    Layout = "_Layout";
+
+    var email = ViewBag.ClientName;
+    var nome = ViewBag.ClientEmail;
+
+}
+@section Styles {
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card card-warning" style="margin-top:20px">
+            <div class="card-header">
+                <div class="card-title">
+                    Cliente: @nome
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Main content -->
+        <div class="invoice p-3 mb-3">
+            <div class="row">
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="example2" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Id Checkout</th>
+                                <th>Data</th>
+                                <th>Data de Entrega</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var book in Model.Value.CheckoutBooks)
+                            {
+                                @*<tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { clientId = user.Id }))'">
+                                    <td>@user.Id</td>
+                                    <td>@user.Name</td>
+                                    <td>@user.NIF</td>
+                                    <td>@user.Email</td>
+                                    <td>@(user.State == true ? "Ativo" : "Inativo" )</td>
+
+                                </tr>*@
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.col -->
+
+            </div>
+        </div>
+        <!-- /.invoice -->
+    </div><!-- /.col -->
+</div>
+@section Scripts {
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+
+    <script>
+        $(function () {
+            $('#example2').DataTable();
+        });
+
+        @*function FilterTable(filter) {
+            $('#example2').dataTable().fnDestroy();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("FilterTable")",
+                data: { filter: filter },
+                dataType: "json",
+                success: function (data) {
+                    $('#example2').html("");
+                    $('#example2').html(data);
+                    $('#example2').DataTable();
+                },
+                error: function (req, status, error) {
+                    console.log(error);
+                }
+            });
+        }*@
+
+    </script>
+}

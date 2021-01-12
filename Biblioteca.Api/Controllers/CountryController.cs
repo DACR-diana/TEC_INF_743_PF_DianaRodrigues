@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("{culture:culture}/api/[controller]")]
     [ApiController]
     public class CountryController : Controller
     {

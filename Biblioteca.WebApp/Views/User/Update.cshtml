@@ -2,7 +2,7 @@
     Layout = "_Layout";
 }
 
-<div class="card card-warning"  style="margin-top: 40px;">
+<div class="card card-warning" style="margin-top: 40px;">
     <div class="card-header">
         <h3 class="card-title">Editar cliente @ViewBag.User.Value.Name</h3>
     </div>
@@ -43,6 +43,9 @@
                 </div>
             </div>
             <div class="card-footer">
+                <button type="button" onclick="CheckCheckout()" class="btn btn-success">Criar Checkout</button>
+                <button type="submit" asp-controller="User" asp-action="GoToCheckoutUserView" class="btn btn-dark">Ver Checkouts</button>
+                <button type="submit" id="BtnCreateCheckout" asp-controller="Checkout" asp-action="Add" hidden ></button>
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </form>
@@ -50,9 +53,37 @@
 </div>
 
 @section Scripts{
+
     <script>
         $(function () {
             $("#customSwitch3").addClass("custom-control-input");
         });
+
+        function CheckCheckout() {
+            $.ajax({
+                type: "POST",
+                url: "/Checkout/GetCheckoutsWithUserByClientIdByState",
+                data: { "clientId":@ViewBag.User.Value.Id,"state":true},
+                success: function (response) {
+                    if (response.length > 0) {
+                        swal({
+                            title: "Aviso!",
+                            text: "Cliente com checkouts em aberto!",
+                            icon: "error",
+                        });
+                    }
+                    else {
+                        $("#BtnCreateCheckout").click();
+                    }
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        };
     </script>
 }

@@ -9,9 +9,10 @@ namespace Biblioteca.Core.Services.Checkouts
 {
     public interface ICheckoutService
     {
-        Checkout GetWithCheckoutBooksById(int Id);
-        Checkout GetWithCheckoutBooksByClientId(int Id);
-        Checkout CreateCheckout(Checkout newCheckout);
-        Checkout UpdateCheckout(Checkout checkoutToBeUpdated);
+        List<Checkout> GetWithCheckoutBooksById(int Id);
+        List<Checkout> GetWithCheckoutBooksByClientId(int Id);
+        List<Checkout> GetWithCheckoutBooksByClientIdAndState(int Id, bool state);
+        List<Checkout> CreateCheckout(Checkout newCheckout);
+        List<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated);
     }
 }

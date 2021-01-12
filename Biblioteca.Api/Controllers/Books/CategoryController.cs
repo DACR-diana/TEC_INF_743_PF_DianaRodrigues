@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Api.Controllers.Books
 {
-    [Route("api/[controller]")]
+    [Route("{culture:culture}/api/[controller]")]
     [ApiController]
     public class CategoryController : Controller
     {

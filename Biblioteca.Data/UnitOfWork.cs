@@ -47,6 +47,7 @@ namespace Biblioteca.Data
         public IClientRepository Clients => _clientRepository = _clientRepository ?? new ClientRepository(_context);
 
         public ICheckoutRepository Checkouts => _checkoutRepository = _checkoutRepository ?? new CheckoutRepository(_context);
+
         public ICountryRepository Countries => _countryRepository = _countryRepository ?? new CountryRepository(_context);
         public IPaymentRepository Payments => _paymentRepository = _paymentRepository ?? new PaymentRepository(_context);
         public ITicketRepository Tickets => _ticketRepository = _ticketRepository ?? new TicketRepository(_context);

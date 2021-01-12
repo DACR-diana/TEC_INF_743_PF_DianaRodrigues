@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Api.Controllers
 {
+    [Route("{culture:culture}/api/[controller]")]
+    [ApiController]
     public class PaymentController : Controller
     {// Dependency Injection
         private readonly IPaymentService _paymentService;

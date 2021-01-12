@@ -17,7 +17,7 @@ namespace Biblioteca.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public Checkout GetWithCheckoutBooksById(int Id)
+        public List<Checkout> GetWithCheckoutBooksById(int Id)
         {
             string[] filters = new string[] { "Checkouts.Id" };
             string[] filters_text = new string[] { Id.ToString() };
@@ -25,20 +25,26 @@ namespace Biblioteca.Services
             return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilter(filters, filters_text);
         }
 
-        public Checkout GetWithCheckoutBooksByClientId(int Id)
+        public List<Checkout> GetWithCheckoutBooksByClientId(int Id)
         {
             string[] filters = new string[] { "ClientId" };
             string[] filters_text = new string[] { Id.ToString() };
             return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilter(filters, filters_text);
         }
 
+        public List<Checkout> GetWithCheckoutBooksByClientIdAndState(int Id,bool state)
+        {
+            string[] filters = new string[] { "ClientId" };
+            string[] filters_text = new string[] { Id.ToString() };
+            return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilterByState(filters, filters_text,state);
+        }
 
-        public Checkout CreateCheckout(Checkout newCheckout)
+        public List<Checkout> CreateCheckout(Checkout newCheckout)
         {
             return _unitOfWork.Checkouts.CreateCheckout(newCheckout);
         }
 
-        public Checkout UpdateCheckout(Checkout checkoutToBeUpdated)
+        public List<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated)
         {
             return _unitOfWork.Checkouts.UpdateCheckout(checkoutToBeUpdated);
         }

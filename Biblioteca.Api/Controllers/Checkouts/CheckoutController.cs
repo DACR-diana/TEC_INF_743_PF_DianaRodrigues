@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Api.Controllers.Checkouts
 {
-    [Route("api/[controller]")]
+    [Route("{culture:culture}/api/[controller]")]
     [ApiController]
     public class CheckoutController : Controller
     {
@@ -27,20 +27,33 @@ namespace Biblioteca.Api.Controllers.Checkouts
             this._checkoutService = checkoutService;
         }
 
-
-
-
-        [HttpGet("GetWithCheckoutBooksById/{id}")]
-        public async Task<ActionResult<CheckoutResource>> GetWithCheckoutBooksById(int id)
+        [HttpGet("GetWithCheckoutBooksById/{clientId}")]
+        public ActionResult<CheckoutResource> GetWithCheckoutBooksById(int id)
         {
             var checkouts = _checkoutService.GetWithCheckoutBooksById(id);
-            var checkoutsResource = _mapper.Map<Checkout, CheckoutResource>(checkouts);
+            var checkoutsResource = _mapper.Map<List<Checkout>, List<CheckoutResource>>(checkouts);
+            return Ok(checkoutsResource);
+        }
+
+        [HttpGet("GetWithCheckoutBooksByClientId/{clientId}")]
+        public ActionResult<CheckoutResource> GetWithCheckoutBooksByClientId(int clientId)
+        {
+            var checkouts = _checkoutService.GetWithCheckoutBooksByClientId(clientId);
+            var checkoutsResource = _mapper.Map<List<Checkout>, List<CheckoutResource>>(checkouts);
+            return Ok(checkoutsResource);
+        }
+
+        [HttpGet("GetWithCheckoutBooksByClientIdAndState/{clientId}/{state}")]
+        public ActionResult<CheckoutResource> GetWithCheckoutBooksByClientIdAndState(int clientId, bool state)
+        {
+            var checkouts = _checkoutService.GetWithCheckoutBooksByClientIdAndState(clientId, state);
+            var checkoutsResource = _mapper.Map<List<Checkout>, List<CheckoutResource>>(checkouts);
             return Ok(checkoutsResource);
         }
 
 
-        [HttpPost("")]
-        public async Task<ActionResult<CheckoutResource>> CreateCheckout([FromBody] SaveCheckoutResource saveCheckoutResource) // object coming from requests body
+        [HttpPost("CreateCheckout")]
+        public async Task<ActionResult<List<CheckoutResource>>> CreateCheckout(SaveCheckoutResource saveCheckoutResource) // object coming from requests body
         {
             var validator = new SaveCheckoutResourceValidator();
             var validationResult = await validator.ValidateAsync(saveCheckoutResource);
@@ -52,13 +65,27 @@ namespace Biblioteca.Api.Controllers.Checkouts
 
             var newCheckout = _checkoutService.CreateCheckout(checkoutToCreate);
 
-            var databaseCheckouts = _checkoutService.GetWithCheckoutBooksById(newCheckout.Id);
+            var databaseCheckouts = _checkoutService.GetWithCheckoutBooksById(newCheckout[0].Id);
 
-            var checkoutResource = new List<CheckoutResource>();
+            return Ok(_mapper.Map<List<Checkout>, List<CheckoutResource>>(databaseCheckouts));
+        }
 
-            checkoutResource.Add(_mapper.Map<Checkout, CheckoutResource>(databaseCheckouts));
+        [HttpPost("UpdateCheckout")]
+        public async Task<ActionResult<List<CheckoutResource>>> UpdateCheckout(SaveCheckoutResource saveCheckoutResource)
+        {
+            var validator = new SaveCheckoutResourceValidator();
+            var validationResult = await validator.ValidateAsync(saveCheckoutResource);
 
-            return Ok(checkoutResource);
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var checkoutToUpdate = _mapper.Map<SaveCheckoutResource, Checkout>(saveCheckoutResource);
+
+            var newCheckout = _checkoutService.UpdateCheckout(checkoutToUpdate);
+
+            var databaseCheckouts = _checkoutService.GetWithCheckoutBooksById(newCheckout[0].Id);
+
+            return Ok(_mapper.Map<List<Checkout>, List<CheckoutResource>>(databaseCheckouts));
         }
 
     }

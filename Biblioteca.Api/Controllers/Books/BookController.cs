@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -8,10 +9,12 @@ using Biblioteca.Api.Validators.Books;
 using Biblioteca.Core.Models.Books;
 using Biblioteca.Core.Services.Books;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 
 namespace Biblioteca.Api.Controllers.Books
 {
-    [Route("api/[controller]")]
+    [Route("{culture:culture}/api/[controller]")]
     [ApiController]
     public class BookController : Controller
     {
@@ -22,15 +25,38 @@ namespace Biblioteca.Api.Controllers.Books
         private readonly IBookAuthorService _bookAuhtorService;
         private readonly IMapper _mapper;
 
-        public BookController(IBookService bookService, IBookCategoryService bookCategoryService,
+        // Dependency Injection Localization
+        private readonly IStringLocalizer<Localization.Controllers.Books.BookResource> _localizer;
+        private readonly IStringLocalizer<Localization.Views.SharedResource> _sharedLocalizer;
+
+        public BookController(IStringLocalizer<Localization.Controllers.Books.BookResource> localizer,
+            IStringLocalizer<Localization.Views.SharedResource> SharedLocalizer,
+            IBookService bookService, IBookCategoryService bookCategoryService,
             IBookAuthorService bookAuhtorService, IMapper mapper)
         {
+            this._localizer = localizer;
+            this._sharedLocalizer = SharedLocalizer;
             this._mapper = mapper;
             this._bookService = bookService;
             this._bookCategoryService = bookCategoryService;
             this._bookAuhtorService = bookAuhtorService;
         }
 
+        #region LOCALIZATION
+
+        [HttpGet("GetBookLanguageContent")]
+        public IActionResult GetBookLanguageContent(string culture)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+            CultureInfo.CurrentUICulture = new CultureInfo(culture);
+            var resourceSet = new List<Dictionary<string, string>>();
+
+            resourceSet.Add(_localizer.GetAllStrings().ToDictionary(x => x.Name, x => x.Value));
+            resourceSet.Add(_sharedLocalizer.GetAllStrings().ToDictionary(x => x.Name, x => x.Value));
+
+            return Ok(resourceSet);
+        }
+        #endregion
 
         [HttpGet("GetAllWithCategoriesAndAuthor")]
         public async Task<ActionResult<IEnumerable<BookResource>>> GetAllWithCategoriesAndAuthor()

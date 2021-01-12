@@ -5,7 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Biblioteca.WebApp.Helpers;
 using Biblioteca.WebApp.Models.Users;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -17,11 +19,12 @@ namespace Biblioteca.WebApp.Controllers
     {
         private string apiBaseUrl;
         private IConfiguration _Configure;
+        private readonly IHttpClientHelper _clientClientHelper;
 
-        public HomeController(IConfiguration configuration)
+        public HomeController(IConfiguration configuration, IHttpClientHelper clientClientHelper)
         {
             _Configure = configuration;
-
+            _clientClientHelper = clientClientHelper;
             apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl");
         }
 
@@ -37,44 +40,27 @@ namespace Biblioteca.WebApp.Controllers
             var employeeNumber = Request.Query["employeeNumber"];
             var email = Request.Query["email"];
 
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            Employee employee = new Employee();
+            employee.Email = email;
+            employee.EmployeeNumber = employeeNumber;
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
+            // GET THIS WITH COOKIES LATER
+            HttpContext.Session.SetString("language", "pt-PT");
+
+            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Employee/GetByEmail/{email}/{employeeNumber}");
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                Employee employee = new Employee();
-                employee.Email = email;
-                employee.EmployeeNumber = employeeNumber;
-
-
-                //StringContent content = new StringContent(JsonConvert.SerializeObject(employee), Encoding.UTF8, "application/json");
-                string endpoint = apiBaseUrl + $"Employee/GetByEmail/{email}/{employeeNumber}";
-              
-
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                  
-
-                    if (Response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        TempData["Employee"] = JsonConvert.SerializeObject(employeeNumber);
-
-                        return RedirectToRoute(new { Controller = "Dashboard", Action = "Index" });
-
-                        //return RedirectToAction("Profile");
-
-                    }
-                    else
-                    {
-                        ModelState.Clear();
-                        ModelState.AddModelError(string.Empty, "Username or Password is Incorrect");
-                        return NotFound();
-
-                    }
-
-                }
+                TempData["Employee"] = JsonConvert.SerializeObject(employeeNumber);
+                return RedirectToRoute(new { Controller = "Dashboard", Action = "Index" });
             }
+            else
+            {
+                ModelState.Clear();
+                ModelState.AddModelError(string.Empty, "Username or Password is Incorrect");
+                return NotFound();
 
+            }
         }
     }
 }

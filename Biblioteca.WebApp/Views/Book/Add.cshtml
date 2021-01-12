@@ -1,6 +1,5 @@
 ﻿@{
     Layout = "_Layout";
-
 }
 
 <div class="card card-warning">
@@ -33,7 +32,7 @@
                         <select class="form-control" name="country">
                             @foreach (var country in Model.countries)
                             {
-                            <option value="@country.Id">@country.Name</option>
+                                <option value="@country.Id">@country.Name</option>
                             }
 
                         </select>

@@ -15,7 +15,7 @@ namespace Biblioteca.Api.Resources.Checkouts
         public DateTime? DeliveryDate { get; set; }
         public DateTime ExpectedDate { get; set; }
         public int ClientId { get; set; }
-
+        public ClientResource Client { get; set; }
         public ICollection<CheckoutBookResource> CheckoutBooks { get; set; }
         //public ICollection<TicketResource> Tickets { get; set; }
     }

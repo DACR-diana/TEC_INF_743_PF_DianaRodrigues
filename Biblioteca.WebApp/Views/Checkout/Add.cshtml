@@ -1,5 +1,67 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Layout = "_Layout";
+
+}
+@section Styles {
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+}
+
+<div class="card card-warning">
+    <div class="card-header">
+        <h3 class="card-title">Criar Checkout</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" asp-controller="Checkout" asp-action="CreateCheckout">
+            <div class="row">
+                <div class="col-sm-6">
+                    <!-- text input -->
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" disabled class="form-control" value="@ViewBag.ClientName">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" disabled class="form-control" value="@ViewBag.ClientEmail">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <!-- select -->
+                    <div class="form-group">
+                        <label>Selecionar livros</label>
+                        <select class="select2-purple" multiple="multiple" name="books" data-placeholder="Ex: Blindness" style="width:100%">
+                            @foreach (var book in Model.Value)
+                            {
+                                <option value="@book.Id">@book.Title</option>
+                            }
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Adicionar</button>
+            </div>
+        </form>
+    </div>
+    <!-- /.card-body -->
+</div>
+@section Scripts {
+    <!-- Select2 -->
+    <script src="~/plugins/select2/js/select2.full.min.js"></script>
+    <script>
+        $(function () {
+            $('.select2-purple').select2()
+        });
+
+    </script>
+
 }

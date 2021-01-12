@@ -10,7 +10,7 @@ using Biblioteca.Api.Resources.Users;
 
 namespace Biblioteca.Api.Controllers.Users
 {
-    [Route("api/[controller]")]
+    [Route("{culture:culture}/api/[controller]")]
     [ApiController]
     public class EmployeeController : Controller
     {
