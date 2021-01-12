@@ -71,10 +71,14 @@ namespace Biblioteca.WebApp.Controllers
 
         public async Task<IActionResult> CheckoutUserCheckouts(int clientId)
         {
-            var checkout = await GetCheckoutsWithUserByClientId(clientId);
-            ViewBag.ClientName = HttpContext.Session.GetString("clientName");
-            ViewBag.ClientEmail = HttpContext.Session.GetString("clientEmail");
-            return View("CheckoutUserCheckouts", checkout);
+            var result = await GetCheckoutsWithUserByClientId(clientId);
+
+            var resultJSON = JsonConvert.SerializeObject(result.Value);
+            var checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
+
+            ViewBag.ClientName = checkouts[0].Client.Name;
+
+            return View("CheckoutUserCheckouts", result);
         }
 
         public async Task<IActionResult> CheckoutListUser()

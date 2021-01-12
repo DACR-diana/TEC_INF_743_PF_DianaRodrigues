@@ -2,8 +2,7 @@
 @{
     Layout = "_Layout";
 
-    var email = ViewBag.ClientName;
-    var nome = ViewBag.ClientEmail;
+    var nome = ViewBag.ClientName;
 
 }
 @section Styles {
@@ -25,7 +24,6 @@
         <!-- Main content -->
         <div class="invoice p-3 mb-3">
             <div class="row">
-                <!-- /.card-header -->
                 <div class="card-body">
                     <table id="example2" class="table table-bordered">
                         <thead>
@@ -37,16 +35,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var book in Model.Value.CheckoutBooks)
+                            @foreach (var checkout in Model.Value)
                             {
-                                @*<tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { clientId = user.Id }))'">
-                                    <td>@user.Id</td>
-                                    <td>@user.Name</td>
-                                    <td>@user.NIF</td>
-                                    <td>@user.Email</td>
-                                    <td>@(user.State == true ? "Ativo" : "Inativo" )</td>
+                                <tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { clientId = checkout.Id }))'">
+                                    <td>@checkout.Id</td>
+                                    <td>@checkout.Date</td>
+                                    <td>@checkout.ExpectedDate</td>
 
-                                </tr>*@
+                                    @if (checkout.DeliveryDate != null)
+                                    {
+                                        <td><span class="badge bg-primary">Encerrado</span></td>
+                                    }
+                                    else if (checkout.ExpectedDate < DateTime.Now)
+                                    {
+                                        <td> <span class="badge bg-danger">Multa Aplicada</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><span class="badge bg-success">A decorrer</span></td>
+                                    }
+
+                                </tr>
                             }
                         </tbody>
                     </table>

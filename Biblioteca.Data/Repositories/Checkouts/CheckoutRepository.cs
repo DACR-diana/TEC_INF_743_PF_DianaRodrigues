@@ -41,12 +41,10 @@ namespace Biblioteca.Data.Repositories.Checkouts
 
 
             string query = @"SELECT Checkouts.Id as 'Id',Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
-                                Checkouts.DeliveryDate,Checkouts.ExpectedDate,
-                                Books.Id as 'BookId', Books.Title as 'Title' FROM Checkouts
-                                inner join Clients on Clients.Id = Checkouts.ClientId
-                                inner join CheckoutBooks on CheckoutBooks.CheckoutId = Checkouts.Id
-                               inner join Books on Books.Id = CheckoutBooks.BookId
-                                 Where";
+									 Checkouts.DeliveryDate,Checkouts.ExpectedDate
+								 FROM Checkouts
+									inner join Clients on Clients.Id = Checkouts.ClientId
+								Where";
 
 
             for (int i = 0; i < filters.Length; i++)
@@ -55,57 +53,61 @@ namespace Biblioteca.Data.Repositories.Checkouts
             DataTable dataTableCheckouts = factory.SelectQuery(query, keys.ToArray(), values.ToArray());
 
             List<Checkout> checkouts = new List<Checkout>();
-            Checkout checkout = new Checkout();
-            List<CheckoutBook> checkoutBooks = new List<CheckoutBook>();
 
-            var pastId = 0;
 
             if (dataTableCheckouts.Rows.Count > 0)
             {
                 for (int i = 0; i < dataTableCheckouts.Rows.Count; i++)
                 {
                     Client client = new Client();
+                    Checkout checkout = new Checkout();
 
                     client.Id = int.Parse(dataTableCheckouts.Rows[i]["ClientId"].ToString());
                     client.Name = dataTableCheckouts.Rows[i]["Name"].ToString();
                     checkout.Id = int.Parse(dataTableCheckouts.Rows[i]["Id"].ToString());
-                    if (i == 0)
-                    {
-                        pastId = checkout.Id;
 
-                        checkout.DeliveryDate = dataTableCheckouts.Rows[i]["DeliveryDate"].ToString() == string.Empty ? (DateTime?)null : DateTime.Parse(dataTableCheckouts.Rows[i]["DeliveryDate"].ToString());
-                        checkout.ExpectedDate = DateTime.Parse(dataTableCheckouts.Rows[i]["ExpectedDate"].ToString());
-
-                        CheckoutBook checkoutBook = new CheckoutBook();
-                        Book book = new Book();
-
-                        book.Id = int.Parse(dataTableCheckouts.Rows[i]["BookId"].ToString());
-                        book.Title = dataTableCheckouts.Rows[i]["Title"].ToString();
-                        checkoutBook.Book = book;
-
-                        checkoutBooks.Add(checkoutBook);
-                        checkout.CheckoutBooks = checkoutBooks;
-                    }
-                    else if (pastId== checkout.Id)
-                    {
-
-                        CheckoutBook checkoutBook = new CheckoutBook();
-                        Book book = new Book();
-
-                        book.Id = int.Parse(dataTableCheckouts.Rows[i]["BookId"].ToString());
-                        book.Title = dataTableCheckouts.Rows[i]["Title"].ToString();
-                        checkoutBook.Book = book;
-
-                        checkout.CheckoutBooks.Where(b=>b.CheckoutId==checkout.Id).Add(checkoutBook);
-                    }
-
-
+                    checkout.DeliveryDate = dataTableCheckouts.Rows[i]["DeliveryDate"].ToString() == string.Empty ? (DateTime?)null : DateTime.Parse(dataTableCheckouts.Rows[i]["DeliveryDate"].ToString());
+                    checkout.ExpectedDate = DateTime.Parse(dataTableCheckouts.Rows[i]["ExpectedDate"].ToString());
+                    checkout.Client = client;
                     checkouts.Add(checkout);
 
                 }
 
 
             }
+
+
+            foreach (var checkout in checkouts)
+            {
+                keys = new HashSet<string>();
+                values = new HashSet<string>();
+                dataTableCheckouts.Dispose();
+
+
+                keys.Add("@CheckoutId");
+                values.Add(checkout.Id.ToString());
+
+                query = @"SELECT Books.Id as 'BookId', Books.Title as 'Title' FROM CheckoutBooks
+                                inner join Checkouts on Checkouts.Id = CheckoutBooks.CheckoutId
+                               inner join Books on Books.Id = CheckoutBooks.BookId
+                                Where CheckoutId=@CheckoutId";
+
+                dataTableCheckouts = factory.SelectQuery(query, keys.ToArray(), values.ToArray());
+                List<CheckoutBook> checkoutBooks = new List<CheckoutBook>();
+
+                for (int i=0; i < dataTableCheckouts.Rows.Count; i++)
+                {
+                    CheckoutBook checkoutBook = new CheckoutBook();
+                    Book book = new Book();
+
+                    book.Id = int.Parse(dataTableCheckouts.Rows[i]["BookId"].ToString());
+                    book.Title = dataTableCheckouts.Rows[i]["Title"].ToString();
+                    checkoutBook.Book = book;
+                    checkoutBooks.Add(checkoutBook);
+                }
+                checkout.CheckoutBooks = checkoutBooks;
+            }
+
             return checkouts;
         }
 
