@@ -17,12 +17,12 @@ namespace Biblioteca.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public List<Checkout> GetWithCheckoutBooksById(int Id)
+        public Checkout GetWithCheckoutBooksById(int Id)
         {
             string[] filters = new string[] { "Checkouts.Id" };
             string[] filters_text = new string[] { Id.ToString() };
 
-            return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilter(filters, filters_text);
+            return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilter(filters, filters_text)[0];
         }
 
         public List<Checkout> GetWithCheckoutBooksByClientId(int Id)

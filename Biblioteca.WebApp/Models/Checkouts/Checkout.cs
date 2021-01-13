@@ -16,5 +16,6 @@ namespace Biblioteca.WebApp.Models.Checkouts
         public Client Client { get; set; }
 
         public ICollection<CheckoutBook> CheckoutBooks { get; set; }
+        public ICollection<Ticket> Tickets { get; set; }
     }
 }

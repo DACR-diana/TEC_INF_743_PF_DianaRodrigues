@@ -9,7 +9,7 @@ namespace Biblioteca.Core.Services.Checkouts
 {
     public interface ICheckoutService
     {
-        List<Checkout> GetWithCheckoutBooksById(int Id);
+        Checkout GetWithCheckoutBooksById(int Id);
         List<Checkout> GetWithCheckoutBooksByClientId(int Id);
         List<Checkout> GetWithCheckoutBooksByClientIdAndState(int Id, bool state);
         List<Checkout> GetExpiredCheckouts();

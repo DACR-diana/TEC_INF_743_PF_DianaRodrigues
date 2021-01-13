@@ -33,10 +33,17 @@ namespace Biblioteca.Api.Controllers.Checkouts
         }
 
         [HttpGet("GetWithCheckoutBooksById/{id}")]
-        public ActionResult<CheckoutResource> GetWithCheckoutBooksById(int id)
+        public async Task<ActionResult<CheckoutResource>> GetWithCheckoutBooksById(int id)
         {
             var checkouts = _checkoutService.GetWithCheckoutBooksById(id);
-            var checkoutsResource = _mapper.Map<List<Checkout>, List<CheckoutResource>>(checkouts);
+
+            var checkoutsResource = _mapper.Map<Checkout, CheckoutResource>(checkouts);
+
+            var ticketCheckout = await _ticketService.GetAllWithCheckoutsByCheckoutsId(checkoutsResource.Id);
+
+            var newTicketResource = _mapper.Map<Ticket, TicketResource>(ticketCheckout);
+            checkoutsResource.Tickets.Add(newTicketResource);
+
             return Ok(checkoutsResource);
         }
 
@@ -106,6 +113,14 @@ namespace Biblioteca.Api.Controllers.Checkouts
 
                 var saveTicket = _mapper.Map<SaveTicketResource, Ticket>(saveTicketResource);
                 var newTicket = await _ticketService.CreateTicket(saveTicket);
+
+                var newTicketResource = _mapper.Map<Ticket, TicketResource>(newTicket);
+                expiredCheckoutResource.Tickets.Add(newTicketResource);
+            }
+            else
+            {
+                var newTicketResource = _mapper.Map<Ticket, TicketResource>(ticketCheckout);
+                expiredCheckoutResource.Tickets.Add(newTicketResource);
             }
             return Ok(expiredCheckoutResource);
         }

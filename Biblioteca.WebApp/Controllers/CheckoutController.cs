@@ -52,13 +52,6 @@ namespace Biblioteca.WebApp.Controllers
             return View();
         }
 
-        //public async Task<IActionResult> CheckoutUser()
-        //{
-        //    var checkout = await GetCheckoutsWithUserByClientId(int.Parse(HttpContext.Session.GetString("clientId")));
-        //    ViewBag.ClientName = HttpContext.Session.GetString("clientName");
-        //    ViewBag.ClientEmail = HttpContext.Session.GetString("clientEmail");
-        //    return View("CheckoutUser", checkout);
-        //}
 
         public async Task<IActionResult> CheckoutUser(int checkoutId)
         {
@@ -66,9 +59,9 @@ namespace Biblioteca.WebApp.Controllers
 
             var result = await GetWithCheckoutBooksById(checkoutId);
             var resultJSON = JsonConvert.SerializeObject(result.Value);
-            var checkout = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
+            var checkout = JsonConvert.DeserializeObject<Checkout>(resultJSON);
 
-            ViewBag.ClientName = checkout[0].Client.Name;
+            ViewBag.ClientName = checkout.Client.Name;
 
             return View("CheckoutUser", checkout);
         }
@@ -83,17 +76,12 @@ namespace Biblioteca.WebApp.Controllers
             var resultJSON = JsonConvert.SerializeObject(result.Value);
             var checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
 
-            ViewBag.ClientName = checkouts[0].Client.Name;
+
+            ViewBag.ClientName = checkouts.Count == 0 ? HttpContext.Session.GetString("clientName") : checkouts[0].Client.Name;
+
 
             return View("CheckoutUserCheckouts", result);
         }
-
-        //public async void CheckoutUserCheckoutsByUser()
-        //{
-        //    int clientId = int.Parse(HttpContext.Session.GetString("clientId"));
-
-        //    await CheckoutUserCheckouts(clientId);
-        //}
 
         public async Task<IActionResult> CheckoutListUser()
         {
@@ -138,7 +126,7 @@ namespace Biblioteca.WebApp.Controllers
 
             var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetWithCheckoutBooksById/{id}");
             var resultJson = await result.Content.ReadAsStringAsync();
-            var checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJson);
+            var checkouts = JsonConvert.DeserializeObject<Checkout>(resultJson);
             return new JsonResult(checkouts);
         }
 

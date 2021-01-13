@@ -6,7 +6,7 @@
 
     var estado = "A decorrer";
 
-    var checkout = Model[0];
+    var checkout = Model;
 
 
     if (checkout.DeliveryDate != null)
@@ -84,18 +84,18 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Multa:</th>
-                                @*@if (Model.Value.DeliveryDate != null)
+                                @if (checkout.DeliveryDate != null)
                                     {
-                                        <td><span class="badge bg-primary">0</span></td>
+                                        <td><span class="badge bg-primary">0 <i class="fas fa-euro-sign"></i></span></td>
                                     }
-                                    else if (Model.Value.ExpectedDate < DateTime.Now)
+                                    else if (checkout.ExpectedDate < DateTime.Now)
                                     {
-                                        <td> <span class="badge bg-danger">Multa Aplicada</span></td>
+                                        <td> <span class="badge bg-danger">5 <i class="fas fa-euro-sign"></i></span></td>
                                     }
                                     else
                                     {
-                                        <td><span class="badge bg-success">A decorrer</span></td>
-                                    }*@
+                                        <td><span class="badge bg-success"> - - -</span></td>
+                                    }
                             </tr>
                         </table>
                     </div>
