@@ -37,7 +37,7 @@
                         <tbody>
                             @foreach (var checkout in Model.Value)
                             {
-                                <tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { clientId = checkout.Id }))'">
+                                <tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { checkoutId = checkout.Id }))'">
                                     <td>@checkout.Id</td>
                                     <td>@checkout.Date</td>
                                     <td>@checkout.ExpectedDate</td>

@@ -8,12 +8,10 @@ namespace Biblioteca.Core.Services
 {
     public interface ITicketService
     {
-        Task<Ticket> GetWithCheckoutsByIdAsync(int id);
-        Task<IEnumerable<Ticket>> GetAllWithCheckoutsByCheckoutsIdAsync(int checkoutId);
-
+        Task<IEnumerable<Ticket>> GetAllTickets();
+        Task<Ticket> GetAllWithCheckoutsByCheckoutsId(int checkoutId);
 
         Task<Ticket> CreateTicket(Ticket newTicket);
-        Task UpdateTicket(Ticket ticketToBeUpdated, Ticket ticket);
-        //Task DeleteBook(Book book);
+        Task UpdateTicket(Ticket ticketToUpdate, Ticket newTicket);
     }
 }

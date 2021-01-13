@@ -8,8 +8,7 @@ namespace Biblioteca.Core.Repositories
 {
     public interface ITicketRepository : IRepository<Ticket>
     {
-        //Task<IEnumerable<Ticket>> GetAllWithCheckoutsAsync();
         Task<Ticket> GetWithCheckoutsByIdAsync(int id);
-        Task<IEnumerable<Ticket>> GetAllWithCheckoutsByCheckoutsIdAsync(int checkoutId);
+        Task<Ticket> GetAllWithCheckoutsByCheckoutsIdAsync(int checkoutId);
     }
 }

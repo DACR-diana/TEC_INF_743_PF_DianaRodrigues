@@ -11,7 +11,10 @@ namespace Biblioteca.Core.Repositories.Checkouts
     {
         List<Checkout> GetWithCheckoutBooksByFilter(string[] filters, string[] filters_text);
         List<Checkout> GetWithCheckoutBooksByFilterByState(string[] filters, string[] filters_text,bool state);
-        List<Checkout> CreateCheckout(Checkout newCheckout);
-        List<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated);
+        List<Checkout> GetExpiredCheckouts();
+
+        Checkout GetExpiredCheckoutById(int checkoutId);
+        Checkout CreateCheckout(Checkout newCheckout);
+        Checkout UpdateCheckout(Checkout checkoutToBeUpdated);
     }
 }

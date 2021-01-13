@@ -31,6 +31,7 @@ namespace Biblioteca.Api.Mapping
             CreateMap<Client, ClientResource>();
             CreateMap<Country, CountryResource>();
             CreateMap<Payment, PaymentResource>();
+            CreateMap<Ticket, TicketResource>();
 
 
             // Resource to Domain
@@ -49,6 +50,8 @@ namespace Biblioteca.Api.Mapping
             CreateMap<SaveClientResource, Client>();
             CreateMap<CountryResource, Country>();
             CreateMap<PaymentResource, Payment>();
+            CreateMap<SaveTicketResource, Ticket>();
+            CreateMap<TicketResource, Ticket>();
 
         }
     }

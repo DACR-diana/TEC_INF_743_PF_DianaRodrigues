@@ -39,12 +39,22 @@ namespace Biblioteca.Services
             return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilterByState(filters, filters_text,state);
         }
 
-        public List<Checkout> CreateCheckout(Checkout newCheckout)
+        public List<Checkout> GetExpiredCheckouts()
+        {
+            return _unitOfWork.Checkouts.GetExpiredCheckouts();
+        }
+
+        public Checkout GetExpiredCheckoutById(int checkoutId)
+        {
+            return _unitOfWork.Checkouts.GetExpiredCheckoutById(checkoutId);
+        }
+
+        public Checkout CreateCheckout(Checkout newCheckout)
         {
             return _unitOfWork.Checkouts.CreateCheckout(newCheckout);
         }
 
-        public List<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated)
+        public Checkout UpdateCheckout(Checkout checkoutToBeUpdated)
         {
             return _unitOfWork.Checkouts.UpdateCheckout(checkoutToBeUpdated);
         }

@@ -58,24 +58,5 @@
         $(function () {
             $('#example2').DataTable();
         });
-
-        @*function FilterTable(filter) {
-            $('#example2').dataTable().fnDestroy();
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("FilterTable")",
-                data: { filter: filter },
-                dataType: "json",
-                success: function (data) {
-                    $('#example2').html("");
-                    $('#example2').html(data);
-                    $('#example2').DataTable();
-                },
-                error: function (req, status, error) {
-                    console.log(error);
-                }
-            });
-        }*@
-
     </script>
 }

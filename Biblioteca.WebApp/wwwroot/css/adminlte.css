@@ -12561,6 +12561,12 @@ body.sidebar-collapse:not(.sidebar-mini-md):not(.sidebar-mini) .main-header::bef
     .main-header .nav-link {
         height: 2.5rem;
         position: relative;
+
+
+    }
+
+    .main-header .nav-item .white_letters {
+        color: white;
     }
 
     .text-sm .main-header .nav-link, .main-header.text-sm .nav-link {
@@ -13080,7 +13086,7 @@ body.sidebar-collapse:not(.sidebar-mini-md):not(.sidebar-mini) .main-header::bef
     }
 
 [class*="sidebar-dark-"] {
-    background-color: #343a40;
+    background-color: #1c2632;
 }
 
     [class*="sidebar-dark-"] .user-panel a:hover {
@@ -15091,7 +15097,7 @@ body.text-sm .control-sidebar {
 }
 
 .navbar-white {
-    background-color: #fff;
+    background-color: #1c2632;
 }
 
 .navbar-gray {

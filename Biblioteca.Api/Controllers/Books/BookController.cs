@@ -42,21 +42,21 @@ namespace Biblioteca.Api.Controllers.Books
             this._bookAuhtorService = bookAuhtorService;
         }
 
-        #region LOCALIZATION
+        //#region LOCALIZATION
 
-        [HttpGet("GetBookLanguageContent")]
-        public IActionResult GetBookLanguageContent(string culture)
-        {
-            CultureInfo.CurrentCulture = new CultureInfo(culture);
-            CultureInfo.CurrentUICulture = new CultureInfo(culture);
-            var resourceSet = new List<Dictionary<string, string>>();
+        //[HttpGet("GetBookLanguageContent")]
+        //public IActionResult GetBookLanguageContent(string culture)
+        //{
+        //    CultureInfo.CurrentCulture = new CultureInfo(culture);
+        //    CultureInfo.CurrentUICulture = new CultureInfo(culture);
+        //    var resourceSet = new List<Dictionary<string, string>>();
 
-            resourceSet.Add(_localizer.GetAllStrings().ToDictionary(x => x.Name, x => x.Value));
-            resourceSet.Add(_sharedLocalizer.GetAllStrings().ToDictionary(x => x.Name, x => x.Value));
+        //    resourceSet.Add(_localizer.GetAllStrings().ToDictionary(x => x.Name, x => x.Value));
+        //    resourceSet.Add(_sharedLocalizer.GetAllStrings().ToDictionary(x => x.Name, x => x.Value));
 
-            return Ok(resourceSet);
-        }
-        #endregion
+        //    return Ok(resourceSet);
+        //}
+        //#endregion
 
         [HttpGet("GetAllWithCategoriesAndAuthor")]
         public async Task<ActionResult<IEnumerable<BookResource>>> GetAllWithCategoriesAndAuthor()

@@ -12,7 +12,10 @@ namespace Biblioteca.Core.Services.Checkouts
         List<Checkout> GetWithCheckoutBooksById(int Id);
         List<Checkout> GetWithCheckoutBooksByClientId(int Id);
         List<Checkout> GetWithCheckoutBooksByClientIdAndState(int Id, bool state);
-        List<Checkout> CreateCheckout(Checkout newCheckout);
-        List<Checkout> UpdateCheckout(Checkout checkoutToBeUpdated);
+        List<Checkout> GetExpiredCheckouts();
+
+        Checkout GetExpiredCheckoutById(int checkoutId);
+        Checkout CreateCheckout(Checkout newCheckout);
+        Checkout UpdateCheckout(Checkout checkoutToBeUpdated);
     }
 }

@@ -44,7 +44,7 @@
             </div>
             <div class="card-footer">
                 <button type="button" onclick="CheckCheckout()" class="btn btn-success">Criar Checkout</button>
-                <button type="submit" asp-controller="User" asp-action="GoToCheckoutUserView" class="btn btn-dark">Ver Checkouts</button>
+                <button type="submit" asp-controller="Checkout" asp-action="CheckoutUserCheckouts"  class="btn btn-dark">Ver Checkouts</button>
                 <button type="submit" id="BtnCreateCheckout" asp-controller="Checkout" asp-action="Add" hidden ></button>
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </div>

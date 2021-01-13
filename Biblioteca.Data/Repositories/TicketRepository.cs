@@ -24,18 +24,13 @@ namespace Biblioteca.Data.Repositories
         public async Task<Ticket> GetWithCheckoutsByIdAsync(int id)
         {
             return await ApiDbContext.Tickets
-              .Include(m => m.Checkout)
-                .Include(m => m.Payment)
-                .SingleOrDefaultAsync(m => m.Id == id); ;
+                .SingleOrDefaultAsync(m => m.Id == id); 
         }
 
-        public async Task<IEnumerable<Ticket>> GetAllWithCheckoutsByCheckoutsIdAsync(int checkoutId)
+        public async Task<Ticket> GetAllWithCheckoutsByCheckoutsIdAsync(int checkoutId)
         {
             return await ApiDbContext.Tickets
-                  .Include(m => m.Checkout)
-                .Include(m => m.Payment)
-                .Where(m => m.Checkout.Id == checkoutId)
-                .ToListAsync();
+                .SingleOrDefaultAsync(m => m.CheckoutId == checkoutId);
         }
     }
 }

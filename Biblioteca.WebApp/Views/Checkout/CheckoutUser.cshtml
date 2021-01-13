@@ -2,22 +2,23 @@
 @{
     Layout = "_Layout";
 
-    var email = ViewBag.ClientName;
-    var nome = ViewBag.ClientEmail;
+    var nome = ViewBag.ClientName;
 
     var estado = "A decorrer";
-    var deliveryDate = "---";
-    var expectedDate = DateTime.Parse(Model.Value.ExpectedDate);
 
-    if (DateTime.Now > Model.Value.ExpectedDate)
+    var checkout = Model[0];
+
+
+    if (checkout.DeliveryDate != null)
+    {
+        estado = "Encerrado";
+
+    }
+    else if (checkout.ExpectedDate < DateTime.Now)
     {
         estado = "Multa aplicada";
     }
-    else if (Model.Value.DeliveryDate != null)
-    {
-        estado = "Encerrado";
-        deliveryDate = DateTime.Parse(Model.Value.DeliveryDate);
-    }
+  
 }
 
 <div class="row">
@@ -25,80 +26,48 @@
         <div class="card card-warning" style="margin-top:20px">
             <div class="card-header">
                 <div class="card-title">
-                    Checkout #@Model.Value.Id
+                    Checkout #@checkout.Id
                 </div>
             </div>
         </div>
 
 
-        <!-- Main content -->
         <div class="invoice p-3 mb-3">
-            <!-- title row -->
             <div class="row">
                 <div class="col-12">
                     <h4>
-                        <i class="fas fa-cash-register"></i> @nome
+                        <i class="fas fa-book"></i> @nome
                     </h4>
                 </div>
-                <!-- /.col -->
             </div>
-            <!-- info row -->
             <div class="row invoice-info">
                 <div class="col-sm-4 invoice-col">
                     <address>
                         Estado:<strong> @estado </strong><br>
-                        Data Requisição: <strong> @Model.Value.Date </strong><br>
-                        Data Pagamento: <strong> @deliveryDate </strong> <br>
-                        Data Entrega: <strong> @expectedDate </strong><br />
-                        Email: <strong> @email </strong><br />
-
+                        Data Requisição: <strong> @checkout.Date </strong><br>
+                        Data Pagamento: <strong> @checkout.DeliveryDate </strong> <br>
+                        Data Entrega: <strong> @checkout.ExpectedDate </strong><br />
                     </address>
                 </div>
-              
+
             </div>
-            <!-- /.row -->
-            <!-- Table row -->
             <div class="row">
                 <div class="col-12 table-responsive">
-                    <table class="table table-striped">
+                    <table id="example2" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Qty</th>
-                                <th>Product</th>
-                                <th>Serial #</th>
-                                <th>Description</th>
-                                <th>Subtotal</th>
+                                <th>Id Livro</th>
+                                <th>Titulo</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Call of Duty</td>
-                                <td>455-981-221</td>
-                                <td>El snort testosterone trophy driving gloves handsome</td>
-                                <td>$64.50</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Need for Speed IV</td>
-                                <td>247-925-726</td>
-                                <td>Wes Anderson umami biodiesel</td>
-                                <td>$50.00</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Monsters DVD</td>
-                                <td>735-845-642</td>
-                                <td>Terry Richardson helvetica tousled street art master</td>
-                                <td>$10.70</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Grown Ups Blue Ray</td>
-                                <td>422-568-642</td>
-                                <td>Tousled lomo letterpress</td>
-                                <td>$25.99</td>
-                            </tr>
+                            @foreach (var checkoutBook in checkout.CheckoutBooks)
+                            {
+                                <tr>
+                                    <td>@checkoutBook.Book.Id</td>
+                                    <td>@checkoutBook.Book.Title</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -115,7 +84,18 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Multa:</th>
-                                <td>$250.30</td>
+                                @*@if (Model.Value.DeliveryDate != null)
+                                    {
+                                        <td><span class="badge bg-primary">0</span></td>
+                                    }
+                                    else if (Model.Value.ExpectedDate < DateTime.Now)
+                                    {
+                                        <td> <span class="badge bg-danger">Multa Aplicada</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><span class="badge bg-success">A decorrer</span></td>
+                                    }*@
                             </tr>
                         </table>
                     </div>
@@ -125,9 +105,14 @@
             <!-- /.row -->
             <div class="row no-print">
                 <div class="col-12">
-                    <button type="button" class="btn btn-success float-right">
-                        <i class="far fa-credit-card"></i> Encerrar Checkout
-                    </button>
+
+                    @if (estado != "Encerrado")
+                    {
+                        <button type="button" class="btn btn-success float-right">
+                            <i class="far fa-credit-card"></i> Encerrar Checkout
+                        </button>
+                    }
+
                     <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
                         <i class="fas fa-envelope-square"></i> Enviar Email
                     </button>

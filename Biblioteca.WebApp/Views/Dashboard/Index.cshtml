@@ -1,6 +1,94 @@
 ﻿@{
     Layout = "_Layout";
-    var teste = Model;
 }
+@section Styles {
+    <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 
-<h1>ENTRAMOS </h1>
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Dashboard</h1>
+            </div><!-- /.col -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@ViewBag.ClientsCount</h3>
+
+                <p>Clientes Registados</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-person-add"></i>
+            </div>
+            <a onclick="location.href='@(Url.Action("List", "User"))'" class="small-box-footer">Mais Informação <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <div class="col-lg-6 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>@ViewBag.TicketsCount</h3>
+
+                <p>Tickets Abertos</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-alert"></i>
+            </div>
+            <a onclick="location.href='@(Url.Action("CheckoutListUser", "Checkout"))'" class="small-box-footer">Mais Informação <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="padding-top: 40px;">
+    <div class="col-12">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">Checkouts em Atraso</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <table id="example2" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Checkout Id</th>
+                            <th>Data</th>
+                            <th>Nome Cliente</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var checkout in Model.Value)
+                        {
+                            <tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { checkoutId = checkout.Id }))'">
+                                <td>@checkout.Id</td>
+                                <td>@checkout.Date</td>
+                                <td>@checkout.Client.Name</td>
+                                <td><span class="badge badge-danger">Multa Aplicada</span></td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.col -->
+</div>
+@section Scripts {
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+
+    <script>
+        $(function () {
+            $('#example2').DataTable();
+        });
+    </script>
+}

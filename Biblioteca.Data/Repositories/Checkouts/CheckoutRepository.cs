@@ -27,7 +27,6 @@ namespace Biblioteca.Data.Repositories.Checkouts
 
         private FactoryRepository factory = new FactoryRepository();
 
-
         public List<Checkout> GetWithCheckoutBooksByFilter(string[] filters, string[] filters_text)
         {
             HashSet<string> keys = new HashSet<string>();
@@ -66,6 +65,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
                     client.Name = dataTableCheckouts.Rows[i]["Name"].ToString();
                     checkout.Id = int.Parse(dataTableCheckouts.Rows[i]["Id"].ToString());
 
+                    checkout.Date = DateTime.Parse(dataTableCheckouts.Rows[i]["Date"].ToString());
                     checkout.DeliveryDate = dataTableCheckouts.Rows[i]["DeliveryDate"].ToString() == string.Empty ? (DateTime?)null : DateTime.Parse(dataTableCheckouts.Rows[i]["DeliveryDate"].ToString());
                     checkout.ExpectedDate = DateTime.Parse(dataTableCheckouts.Rows[i]["ExpectedDate"].ToString());
                     checkout.Client = client;
@@ -95,7 +95,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
                 dataTableCheckouts = factory.SelectQuery(query, keys.ToArray(), values.ToArray());
                 List<CheckoutBook> checkoutBooks = new List<CheckoutBook>();
 
-                for (int i=0; i < dataTableCheckouts.Rows.Count; i++)
+                for (int i = 0; i < dataTableCheckouts.Rows.Count; i++)
                 {
                     CheckoutBook checkoutBook = new CheckoutBook();
                     Book book = new Book();
@@ -150,6 +150,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
                 client.Id = int.Parse(dataTableCheckouts.Rows[0]["ClientId"].ToString());
                 client.Name = dataTableCheckouts.Rows[0]["Name"].ToString();
 
+                checkout.Date = DateTime.Parse(dataTableCheckouts.Rows[0]["Date"].ToString());
                 checkout.Id = int.Parse(dataTableCheckouts.Rows[0]["Id"].ToString());
                 checkout.DeliveryDate = dataTableCheckouts.Rows[0]["DeliveryDate"].ToString() == string.Empty ? (DateTime?)null : DateTime.Parse(dataTableCheckouts.Rows[0]["DeliveryDate"].ToString());
                 checkout.ExpectedDate = DateTime.Parse(dataTableCheckouts.Rows[0]["ExpectedDate"].ToString());
@@ -171,7 +172,80 @@ namespace Biblioteca.Data.Repositories.Checkouts
             }
             return checkouts;
         }
-        public List<Checkout> CreateCheckout(Checkout newCheckout)
+
+        public List<Checkout> GetExpiredCheckouts()
+        {
+            string query = @"SELECT Checkouts.Id as 'Id',Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
+                                Checkouts.DeliveryDate,Checkouts.ExpectedDate
+								FROM Checkouts
+                                inner join Clients on Clients.Id = Checkouts.ClientId
+                                 Where Checkouts.ExpectedDate < GETDATE() and Checkouts.DeliveryDate is null";
+
+            DataTable dataTableCheckouts = factory.SelectQuery(query);
+
+            List<Checkout> checkouts = new List<Checkout>();
+
+            if (dataTableCheckouts.Rows.Count > 0)
+            {
+                for (int i = 0; i < dataTableCheckouts.Rows.Count; i++)
+                {
+                    Client client = new Client();
+                    Checkout checkout = new Checkout();
+
+                    client.Id = int.Parse(dataTableCheckouts.Rows[i]["ClientId"].ToString());
+                    client.Name = dataTableCheckouts.Rows[i]["Name"].ToString();
+
+                    checkout.Id = int.Parse(dataTableCheckouts.Rows[i]["Id"].ToString());
+                    checkout.Date = DateTime.Parse(dataTableCheckouts.Rows[i]["Date"].ToString());
+                    checkout.DeliveryDate = dataTableCheckouts.Rows[i]["DeliveryDate"].ToString() == string.Empty ? (DateTime?)null : DateTime.Parse(dataTableCheckouts.Rows[0]["DeliveryDate"].ToString());
+                    checkout.ExpectedDate = DateTime.Parse(dataTableCheckouts.Rows[i]["ExpectedDate"].ToString());
+                    checkout.Client = client;
+                    checkouts.Add(checkout);
+                }
+
+            }
+            return checkouts;
+        }
+
+
+        public Checkout GetExpiredCheckoutById(int checkoutId)
+        {
+            string[] keys = new string[] { $"@CheckoutsID" };
+            string[] values = new string[] { checkoutId.ToString() };
+
+
+            string query = @"SELECT Checkouts.Id as 'Id',Clients.Id as 'ClientId',Clients.Name,Checkouts.Date,
+                                Checkouts.DeliveryDate,Checkouts.ExpectedDate
+								FROM Checkouts
+                                inner join Clients on Clients.Id = Checkouts.ClientId
+                                 Where Checkouts.ExpectedDate < GETDATE() AND Checkouts.DeliveryDate is null AND Checkouts.Id=@CheckoutsID";
+
+            DataTable dataTableExpiredCheckout = factory.SelectQuery(query, keys, values);
+            Checkout checkout = new Checkout();
+
+
+            if (dataTableExpiredCheckout.Rows.Count > 0)
+            {
+                for (int i = 0; i < dataTableExpiredCheckout.Rows.Count; i++)
+                {
+                    Client client = new Client();
+                    checkout = new Checkout();
+
+                    client.Id = int.Parse(dataTableExpiredCheckout.Rows[i]["ClientId"].ToString());
+                    client.Name = dataTableExpiredCheckout.Rows[i]["Name"].ToString();
+
+                    checkout.Date = DateTime.Parse(dataTableExpiredCheckout.Rows[i]["Date"].ToString());
+                    checkout.Id = int.Parse(dataTableExpiredCheckout.Rows[i]["Id"].ToString());
+                    checkout.DeliveryDate = dataTableExpiredCheckout.Rows[i]["DeliveryDate"].ToString() == string.Empty ? (DateTime?)null : DateTime.Parse(dataTableExpiredCheckout.Rows[0]["DeliveryDate"].ToString());
+                    checkout.ExpectedDate = DateTime.Parse(dataTableExpiredCheckout.Rows[i]["ExpectedDate"].ToString());
+                    checkout.Client = client;
+                }
+
+            }
+            return checkout;
+        }
+
+        public Checkout CreateCheckout(Checkout newCheckout)
         {
 
             string[] keys = { "@Date", "@ExpectedDate", "ClientId" };
@@ -179,7 +253,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
 
             string query = @"INSERT INTO Checkouts (Date,ExpectedDate,ClientId) Output Inserted.Id Values (@Date,@ExpectedDate,@ClientId)";
             var id = factory.SelectQuery(query, keys, values).Rows[0][0].ToString();
-            return CreateCheckoutBooks(int.Parse(id), newCheckout.CheckoutBooks);
+            return CreateCheckoutBooks(int.Parse(id), newCheckout.CheckoutBooks)[0];
         }
 
         private List<Checkout> CreateCheckoutBooks(int checkoutId, ICollection<CheckoutBook> books)
@@ -208,7 +282,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
             factory.SelectQuery(query, keys, values);
         }
 
-        public List<Checkout> UpdateCheckout(Checkout checkout)
+        public Checkout UpdateCheckout(Checkout checkout)
         {
             string[] keys = { "@Id", "@DeliveryDate" };
             string[] values = { checkout.Id.ToString(), checkout.DeliveryDate.ToString() };
@@ -219,7 +293,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
             DeleteCheckoutBooks(checkout.Id);
             CreateCheckoutBooks(checkout.Id, checkout.CheckoutBooks);
 
-            return GetWithCheckoutBooksByFilter(new string[] { "Checkouts.Id" }, new string[] { checkout.Id.ToString() });
+            return GetWithCheckoutBooksByFilter(new string[] { "Checkouts.Id" }, new string[] { checkout.Id.ToString() })[0];
         }
     }
 }

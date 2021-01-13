@@ -60,17 +60,24 @@ namespace Biblioteca.WebApp.Controllers
         //    return View("CheckoutUser", checkout);
         //}
 
-        public async Task<IActionResult> CheckoutUser(int clientId)
+        public async Task<IActionResult> CheckoutUser(int checkoutId)
         {
-            var checkout = await GetWithCheckoutBooksById(clientId);
-            ViewBag.ClientName = HttpContext.Session.GetString("clientName");
-            ViewBag.ClientEmail = HttpContext.Session.GetString("clientEmail");
+
+
+            var result = await GetWithCheckoutBooksById(checkoutId);
+            var resultJSON = JsonConvert.SerializeObject(result.Value);
+            var checkout = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
+
+            ViewBag.ClientName = checkout[0].Client.Name;
+
             return View("CheckoutUser", checkout);
         }
 
 
-        public async Task<IActionResult> CheckoutUserCheckouts(int clientId)
+        public async Task<IActionResult> CheckoutUserCheckouts(int clientId = 0)
         {
+            clientId = clientId == 0 ? int.Parse(HttpContext.Session.GetString("clientId")) : clientId;
+
             var result = await GetCheckoutsWithUserByClientId(clientId);
 
             var resultJSON = JsonConvert.SerializeObject(result.Value);
@@ -80,6 +87,13 @@ namespace Biblioteca.WebApp.Controllers
 
             return View("CheckoutUserCheckouts", result);
         }
+
+        //public async void CheckoutUserCheckoutsByUser()
+        //{
+        //    int clientId = int.Parse(HttpContext.Session.GetString("clientId"));
+
+        //    await CheckoutUserCheckouts(clientId);
+        //}
 
         public async Task<IActionResult> CheckoutListUser()
         {
