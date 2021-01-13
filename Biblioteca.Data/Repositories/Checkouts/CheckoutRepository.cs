@@ -207,6 +207,20 @@ namespace Biblioteca.Data.Repositories.Checkouts
             return checkouts;
         }
 
+        public int GetClientCount()
+        {
+            string query = @"exec GetClientsCount";
+
+            DataTable dataTableClients = factory.SelectQuery(query);
+
+            int count = 0;
+
+            if (dataTableClients.Rows.Count > 0)
+                count = int.Parse(dataTableClients.Rows[0]["clients"].ToString());
+
+            return count;
+        }
+
 
         public Checkout GetExpiredCheckoutById(int checkoutId)
         {

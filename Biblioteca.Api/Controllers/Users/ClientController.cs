@@ -80,5 +80,7 @@ namespace Biblioteca.Api.Controllers.Users
             return Ok(clientsResource);
         }
 
+      
+
     }
 }

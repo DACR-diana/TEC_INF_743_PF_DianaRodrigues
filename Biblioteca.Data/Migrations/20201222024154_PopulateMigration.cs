@@ -83,6 +83,29 @@ namespace Biblioteca.Data.Migrations
             migrationBuilder.Sql("INSERT INTO CheckoutBooks (BookId,CheckoutId) Values (1,1)");
             migrationBuilder.Sql("INSERT INTO CheckoutBooks (BookId,CheckoutId) Values (2,1)");
 
+
+            #endregion
+
+            #region Payments
+
+            migrationBuilder.Sql("INSERT INTO Payments (Name) Values ('Multibanco')");
+
+
+            #endregion
+
+
+            #region Stored Procedure
+
+            string storedProcedure = @"CREATE PROCEDURE [GetClientsCount]
+                AS
+                BEGIN
+                    select count(Id) as 'Clients' from Clients 
+                END";
+
+            migrationBuilder.Sql(storedProcedure);
+
+
+
             #endregion
         }
 

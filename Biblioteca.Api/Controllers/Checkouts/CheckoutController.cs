@@ -167,5 +167,12 @@ namespace Biblioteca.Api.Controllers.Checkouts
             return Ok();
         }
 
+        [HttpGet("GetCountClient")]
+        public int GetCountClient()
+        {
+            var count = _checkoutService.GetClientCount();
+            return count;
+        }
+
     }
 }

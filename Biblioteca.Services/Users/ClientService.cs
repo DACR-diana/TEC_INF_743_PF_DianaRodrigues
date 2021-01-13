@@ -26,6 +26,7 @@ namespace Biblioteca.Services.Users
             return await _unitOfWork.Clients.GetAllWithCheckoutAsync();
         }
 
+
         public async Task<Client> CreateClient(Client newClient)
         {
             await _unitOfWork.Clients.AddAsync(newClient);

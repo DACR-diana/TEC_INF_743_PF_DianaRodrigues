@@ -63,12 +63,9 @@ namespace Biblioteca.WebApp.Controllers
         private async Task<int> GetClientsCount()
         {
 
-            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Client/GetAllWithCheckout");
+            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetCountClient");
             var resultJson = await result.Content.ReadAsStringAsync();
-
-            var checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJson);
-
-            return checkouts.Count;
+            return int.Parse(resultJson);
         }
     }
 }

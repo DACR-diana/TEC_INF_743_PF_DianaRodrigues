@@ -32,6 +32,11 @@ namespace Biblioteca.Services
             return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilter(filters, filters_text);
         }
 
+        public int GetClientCount()
+        {
+           return _unitOfWork.Checkouts.GetClientCount();
+        }
+
         public List<Checkout> GetWithCheckoutBooksByClientIdAndState(int Id,bool state)
         {
             string[] filters = new string[] { "ClientId" };
