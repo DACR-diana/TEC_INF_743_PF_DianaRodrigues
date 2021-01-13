@@ -30,25 +30,25 @@ namespace Biblioteca.WebApp.Controllers
 
         private async Task<JsonResult> GetUser(string email)
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-            Client client = new Client();
-            using (HttpClient httpClient = new HttpClient(httpClientHandler))
-            {
-                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Client/GetWithCheckoutByEmail/{email}";
 
-                using (var Response = await httpClient.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    client = JsonConvert.DeserializeObject<Client>(result);
-                    HttpContext.Session.SetString("clientEmail", email);
-                    HttpContext.Session.SetString("clientId", client.Id.ToString());
-                    HttpContext.Session.SetString("clientName", client.Name);
+            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Client/GetWithCheckoutByEmail/{email}");
+            var resutlJson = await result.Content.ReadAsStringAsync();
 
-                }
+            Client client = JsonConvert.DeserializeObject<Client>(resutlJson);
 
-            }
+            HttpContext.Session.SetString("clientEmail", email);
+            HttpContext.Session.SetString("clientId", client.Id.ToString());
+            HttpContext.Session.SetString("clientName", client.Name);
+
+
             return new JsonResult(client);
+        }
+
+        public async Task<string> CheckClient(string email)
+        {
+            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Client/GetWithCheckoutByEmail/{email}");
+            var resutlJson = await result.Content.ReadAsStringAsync();
+            return resutlJson;
         }
 
         private async Task<JsonResult> GetClients()
@@ -155,7 +155,7 @@ namespace Biblioteca.WebApp.Controllers
 
                             HttpContext.Session.SetString("clientName", name);
                             HttpContext.Session.SetString("clientId", clientDatabase.Id.ToString());
-                            return GoToCheckoutAddView();
+                            return await List();
                         }
                         else
                         {

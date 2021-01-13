@@ -3,7 +3,7 @@
 
 }
 
-<div class="card card-warning"  style="margin-top: 40px;">
+<div class="card card-warning" style="margin-top: 40px;">
     <div class="card-header">
         <h3 class="card-title">Adicionar Cliente</h3>
     </div>
@@ -30,9 +30,59 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Adicionar</button>
+                <button type="button" onclick="CheckEmail()" class="btn btn-primary">Adicionar</button>
+                <button type="submit" id="BtnSubmitClient" class="btn btn-primary" hidden></button>
             </div>
         </form>
     </div>
     <!-- /.card-body -->
 </div>
+
+@section Scripts{
+
+    <script>
+        function CheckEmail() {
+            $.ajax({
+                type: "POST",
+                url: "/User/CheckClient",
+                data: { "email": $('input[name="email"]').val() },
+                success: function (response) {
+                    if (response != "") {
+                        swal({
+                            title: "Aviso!",
+                            text: "Email não está disponível!",
+                            icon: "error",
+                        });
+                    }
+                    else {
+
+                        if ($('input[name="email"]').val() == "" || $('input[name="NIF"]').val() == "" || $('input[name="name"]').val()=="") {
+                            swal({
+                                title: "Aviso!",
+                                text: "Todos os campos são obrigatórios!",
+                                icon: "error",
+                            });
+                        }
+                        else if ($('input[name="NIF"]').val().length > 9) {
+                            swal({
+                                title: "Aviso!",
+                                text: "O NIF só pode conter 9 caracteres!",
+                                icon: "error",
+                            });
+                        }
+                        else {
+                            $("#BtnSubmitClient").click();
+                        }
+                    }
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        };
+    </script>
+}
