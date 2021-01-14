@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Biblioteca.WebApp.Helpers;
+using jsreport.AspNetCore;
+using jsreport.Binary;
+using jsreport.Local;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -39,8 +43,11 @@ namespace Biblioteca.WebApp
             services.AddControllers();
             services.AddSession();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
-           
+            services.AddJsReport(new LocalReporting()
+            .UseBinary(JsReportBinary.GetBinary())
+            .KillRunningJsReportProcesses()
+            .AsUtility()
+            .Create());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

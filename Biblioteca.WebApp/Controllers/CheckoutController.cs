@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -13,6 +14,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using IronPdf;
+using System.Reflection.Metadata;
+using jsreport.AspNetCore;
+using jsreport.Types;
 
 namespace Biblioteca.WebApp.Controllers
 {
@@ -21,13 +26,17 @@ namespace Biblioteca.WebApp.Controllers
         private string apiBaseUrl;
         private IConfiguration _Configure;
         private readonly IHttpClientHelper _clientClientHelper;
-        public CheckoutController(IConfiguration configuration, IHttpClientHelper clientClientHelper)
+        public CheckoutController(IConfiguration configuration, IHttpClientHelper clientClientHelper, IJsReportMVCService jsReportMVCService)
         {
             _Configure = configuration;
             _clientClientHelper = clientClientHelper;
-
+            JsReportMVCService = jsReportMVCService;
             apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl");
         }
+
+
+        public IJsReportMVCService JsReportMVCService { get; }
+
 
         public IActionResult ErrorMessage()
         {
@@ -279,6 +288,48 @@ namespace Biblioteca.WebApp.Controllers
                     }
                 }
             }
+        }
+        #endregion
+
+        #region PDF
+
+        [MiddlewareFilter(typeof(JsReportPipeline))]
+        public async Task<IActionResult> CreatePDF(int checkoutId)
+        {
+
+            HttpContext.JsReportFeature().Recipe(Recipe.ChromePdf)
+                .OnAfterRender((r) => HttpContext.Response.Headers["Content-Disposition"] = "attachment; filename=\"Report.pdf\"");
+
+
+            var result = await GetWithCheckoutBooksById(checkoutId);
+            var resultJSON = JsonConvert.SerializeObject(result.Value);
+            var checkout = JsonConvert.DeserializeObject<Checkout>(resultJSON);
+
+            ViewBag.ClientName = checkout.Client.Name;
+
+            return View("PDF/Invoice", checkout);
+
+
+            //string[] lines = { "First line", "Second line", "Third line" };
+
+            //// Set a variable to the Documents path.
+            //string docPath =
+            //  Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            //// Write the string array to a new file named "WriteLines.txt".
+            //using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "teste.txt")))
+            //{
+            //    foreach (string line in lines)
+            //        outputFile.WriteLine(line);
+            //}
+
+
+            //var net = new System.Net.WebClient();
+            //var data = net.DownloadData("example.pdf");
+            //var content = new System.IO.MemoryStream(data);
+            //var contentType = "APPLICATION/octet-stream";
+            //var fileName = "teste.txt";
+            //return File(content, contentType, fileName);
         }
         #endregion
     }

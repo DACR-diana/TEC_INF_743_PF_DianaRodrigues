@@ -1,7 +1,5 @@
 ﻿
 @{
-    Layout = "_Layout";
-
     var nome = ViewBag.ClientName;
 
     var estado = "A decorrer";
@@ -18,7 +16,7 @@
     {
         estado = "Multa aplicada";
     }
-  
+
 }
 
 <div class="row">
@@ -36,7 +34,7 @@
             <div class="row">
                 <div class="col-12">
                     <h4>
-                        <i class="fas fa-book"></i> @nome
+                        @nome
                     </h4>
                 </div>
             </div>
@@ -85,47 +83,22 @@
                             <tr>
                                 <th style="width:50%">Multa:</th>
                                 @if (checkout.DeliveryDate != null)
-                                    {
-                                        <td><span class="badge bg-primary">0 <i class="fas fa-euro-sign"></i></span></td>
-                                    }
-                                    else if (checkout.ExpectedDate < DateTime.Now)
-                                    {
-                                        <td> <span class="badge bg-danger">5 <i class="fas fa-euro-sign"></i></span></td>
-                                    }
-                                    else
-                                    {
-                                        <td><span class="badge bg-success"> - - -</span></td>
-                                    }
+                                {
+                                    <td>0 </td>
+                                }
+                                else if (checkout.ExpectedDate < DateTime.Now)
+                                {
+                                    <td>5</td>
+                                }
+                                else
+                                {
+                                    <td>- - -</td>
+                                }
                             </tr>
                         </table>
                     </div>
                 </div>
                 <!-- /.col -->
-            </div>
-            <!-- /.row -->
-            <div class="row no-print">
-                <div class="col-12">
-
-                    @if (estado != "Encerrado")
-                    {
-                        <button type="button" class="btn btn-success float-right">
-                            <i class="far fa-credit-card"></i> Encerrar Checkout
-                        </button>
-                    }
-
-                    @{Html.BeginForm("CreatePDF", "Checkout", new { checkoutId = @checkout.Id }, FormMethod.Post);
-                        {
-                            <button type="submit" class="btn btn-primary float-right" style="margin-right: 5px;">
-                                <i class="fas fa-envelope-square"></i> Download
-                            </button>
-                        }
-                        Html.EndForm();
-                    }
-
-                    @*<button type="button" asp-controller="Checkout" asp-action="CreatePDF" class="btn btn-primary float-right" style="margin-right: 5px;">
-                        <i class="fas fa-envelope-square"></i> Download
-                    </button>*@
-                </div>
             </div>
         </div>
         <!-- /.invoice -->
