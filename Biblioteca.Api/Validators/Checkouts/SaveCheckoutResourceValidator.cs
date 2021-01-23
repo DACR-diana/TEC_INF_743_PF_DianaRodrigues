@@ -12,8 +12,8 @@ namespace Biblioteca.Api.Validators.Checkouts
 
         public SaveCheckoutResourceValidator()
         {
-            RuleFor(a => a.ClientId)
-                .NotEmpty();
+            //RuleFor(a => a.ClientId)
+            //    .NotEmpty();
 
             RuleFor(a => a.Date)
                .NotEmpty();

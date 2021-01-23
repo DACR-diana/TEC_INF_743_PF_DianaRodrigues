@@ -35,16 +35,18 @@ namespace Biblioteca.WebApp.Controllers
         }
 
 
+        // Variable from JsReport function
         public IJsReportMVCService JsReportMVCService { get; }
 
 
         public IActionResult ErrorMessage()
         {
-            return Content("Ocorreu algum erro na API ");
+            return Json(new { Status = "Error" });
         }
 
         #region VIEWS
 
+        // GO TO VIEW ADD
         public async Task<IActionResult> Add()
         {
             ViewBag.ClientName = HttpContext.Session.GetString("clientName");
@@ -52,7 +54,7 @@ namespace Biblioteca.WebApp.Controllers
             return View(await GetBooks());
         }
 
-
+        // GO TO VIEW UPDATE
         public async Task<IActionResult> Update()
         {
             ViewBag.ClientName = HttpContext.Session.GetString("clientName");
@@ -61,11 +63,9 @@ namespace Biblioteca.WebApp.Controllers
             return View();
         }
 
-
+        // Function to redirect to view CheckoutUser 
         public async Task<IActionResult> CheckoutUser(int checkoutId)
         {
-
-
             var result = await GetWithCheckoutBooksById(checkoutId);
             var resultJSON = JsonConvert.SerializeObject(result.Value);
             var checkout = JsonConvert.DeserializeObject<Checkout>(resultJSON);
@@ -75,7 +75,7 @@ namespace Biblioteca.WebApp.Controllers
             return View("CheckoutUser", checkout);
         }
 
-
+        // GO TO CHECKOUT USER CHECKOUTS VIEW -> ALL CHECKOUTS PER USER
         public async Task<IActionResult> CheckoutUserCheckouts(int clientId = 0)
         {
             clientId = clientId == 0 ? int.Parse(HttpContext.Session.GetString("clientId")) : clientId;
@@ -85,13 +85,12 @@ namespace Biblioteca.WebApp.Controllers
             var resultJSON = JsonConvert.SerializeObject(result.Value);
             var checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
 
-
             ViewBag.ClientName = checkouts.Count == 0 ? HttpContext.Session.GetString("clientName") : checkouts[0].Client.Name;
-
 
             return View("CheckoutUserCheckouts", result);
         }
 
+        // GO TO CHECKOUT LIST USER -> ALL USERS
         public async Task<IActionResult> CheckoutListUser()
         {
             ViewBag.Users = await GetClients();
@@ -101,7 +100,7 @@ namespace Biblioteca.WebApp.Controllers
         #endregion
 
         #region GET
-
+        // Function to get all clients
         private async Task<JsonResult> GetClients()
         {
 
@@ -111,25 +110,23 @@ namespace Biblioteca.WebApp.Controllers
             return new JsonResult(clients);
         }
 
+        // Function to get all books
         private async Task<JsonResult> GetBooks()
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-            var books = new List<Book>();
+            List<Book> books = new List<Book>();
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
-            {
-                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{true}";
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    books = JsonConvert.DeserializeObject<List<Book>>(result);
-                }
+            // API CALL
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{true}";
+            var response = await _clientClientHelper.GetContent(endpoint);
 
-            }
+            var result = await response.Content.ReadAsStringAsync();
+
+            // Convert string to List of Objects
+            books = JsonConvert.DeserializeObject<List<Book>>(result);
             return new JsonResult(books);
         }
 
+        // Function to get all books from one checkout
         private async Task<JsonResult> GetWithCheckoutBooksById(int id)
         {
 
@@ -139,197 +136,141 @@ namespace Biblioteca.WebApp.Controllers
             return new JsonResult(checkouts);
         }
 
+        // Function to get all checkouts from one user
         private async Task<JsonResult> GetCheckoutsWithUserByClientId(int clientId)
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             var checkouts = new List<Checkout>();
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetWithCheckoutBooksByClientId/{clientId}";
+            using (var Response = await _clientClientHelper.GetContent(endpoint))
             {
-                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetWithCheckoutBooksByClientId/{clientId}";
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    checkouts = JsonConvert.DeserializeObject<List<Checkout>>(result);
-                }
-
+                var result = await Response.Content.ReadAsStringAsync();
+                checkouts = JsonConvert.DeserializeObject<List<Checkout>>(result);
             }
             return new JsonResult(checkouts);
         }
 
+        // Get all checkouts from one client depending on the id and state
         public async Task<JsonResult> GetCheckoutsWithUserByClientIdByState(int clientId, bool state)
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             var checkouts = new List<Checkout>();
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetWithCheckoutBooksByClientIdAndState/{clientId}/{state}";
+            using (var Response = await _clientClientHelper.GetContent(endpoint))
             {
-                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetWithCheckoutBooksByClientIdAndState/{clientId}/{state}";
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    checkouts = JsonConvert.DeserializeObject<List<Checkout>>(result);
-                }
-
+                var result = await Response.Content.ReadAsStringAsync();
+                checkouts = JsonConvert.DeserializeObject<List<Checkout>>(result);
             }
             return new JsonResult(checkouts);
         }
 
         #endregion
 
-
         #region Actions
 
+        // Create checkout function
         public async Task<IActionResult> CreateCheckout()
         {
             var books = Request.Form["books"];
 
+            // Check Book Count -> IF 0 Show to erro message
             if (books.Count == 0)
                 return ErrorMessage();
             else
             {
-                var httpClientHandler = new HttpClientHandler();
-                httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                Checkout checkout = new Checkout();
+                checkout.Date = DateTime.Now;
+                checkout.ClientId = int.Parse(HttpContext.Session.GetString("clientId"));
+                checkout.ExpectedDate = DateTime.Now.AddDays(7);
 
-                using (HttpClient client = new HttpClient(httpClientHandler))
+                List<CheckoutBook> checkoutBooks = new List<CheckoutBook>();
+                // Add books to checkout object
+                foreach (var book in books)
                 {
-
-                    Checkout checkout = new Checkout();
-                    checkout.Date = DateTime.Now;
-                    checkout.ClientId = int.Parse(HttpContext.Session.GetString("clientId"));
-                    checkout.ExpectedDate = DateTime.Now.AddDays(7);
-
-                    List<CheckoutBook> checkoutBooks = new List<CheckoutBook>();
-
-                    foreach (var book in books)
-                    {
-                        var bookForCheckout = new Book() { Id = int.Parse(book) };
-                        checkoutBooks.Add(new CheckoutBook() { Book = bookForCheckout });
-                    }
-
-
-                    checkout.CheckoutBooks = checkoutBooks;
-
-                    HttpContent content = new StringContent(JsonConvert.SerializeObject(checkout), Encoding.UTF8, "application/json");
-                    string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Checkout/CreateCheckout";
-                    using (var Response = await client.PostAsync(endpoint, content))
-                    {
-                        if (Response.StatusCode == System.Net.HttpStatusCode.OK)
-                            return await CheckoutUser(checkout.ClientId);
-                        else
-                        {
-                            ModelState.Clear();
-                            return ErrorMessage();
-                        }
-
-                    }
-
+                    var bookForCheckout = new Book() { Id = int.Parse(book) };
+                    checkoutBooks.Add(new CheckoutBook() { Book = bookForCheckout });
                 }
+
+
+                checkout.CheckoutBooks = checkoutBooks;
+
+                // API CALL
+                HttpContent content = new StringContent(JsonConvert.SerializeObject(checkout), Encoding.UTF8, "application/json");
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/CreateCheckout";
+                var response = await _clientClientHelper.PostContent(endpoint, content);
+
+                // Redirect to View CheckoutUser
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var resultJson = await response.Content.ReadAsStringAsync();
+                    Checkout newCheckout = JsonConvert.DeserializeObject<Checkout>(resultJson);
+
+                    return await CheckoutUser(newCheckout.Id);
+                }
+                else
+                {
+                    ModelState.Clear();
+                    return ErrorMessage();
+                }
+
+
             }
         }
 
-        public async Task<IActionResult> SaveCheckout()
+        // Update Checkout
+        public async Task<IActionResult> SaveCheckout(int checkoutId)
         {
-            var isbn = Request.Form["isbn"];
-            var title = Request.Form["title"];
-            var categories = Request.Form["categories"];
-            var authors = Request.Form["authors"];
-            var country = Request.Form["country"];
-            var state = Request.Form["customSwitch3"];
+            // Get Checkout Object from DataBase
+            var result = await GetWithCheckoutBooksById(checkoutId);
 
-            if (Request.Form["customSwitch3"].Count > 1)
-                state = Request.Form["customSwitch3"][0];
-
-            if (categories.Count == 0 || authors.Count == 0 || country.Count == 0)
+            // If it's null return error message
+            if (result.Value == null)
                 return ErrorMessage();
             else
             {
-                var httpClientHandler = new HttpClientHandler();
-                httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                // Else convert Json to Object
+                var resultJSON = JsonConvert.SerializeObject(result.Value);
+                var checkout = JsonConvert.DeserializeObject<Checkout>(resultJSON);
 
-                using (HttpClient client = new HttpClient(httpClientHandler))
+                // API CALL
+                HttpContent content = new StringContent(JsonConvert.SerializeObject(checkout), Encoding.UTF8, "application/json");
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/UpdateCheckout";
+                var teste = JsonConvert.SerializeObject(checkout);
+                // API RESPONSE
+                var newResult = await _clientClientHelper.PostContent(endpoint, content);
+
+                // If it's all ok, return code 200 
+                if (newResult.StatusCode == System.Net.HttpStatusCode.OK)
+                    return Json(new { Status = "200", Result = newResult.Content.ReadAsStringAsync() });
+                else
                 {
-
-                    Book book = new Book();
-                    book.Id = int.Parse(HttpContext.Session.GetString("bookId"));
-                    book.CountryId = int.Parse(country);
-                    book.ISBN = int.Parse(isbn);
-                    book.Title = title;
-                    book.State = bool.Parse(state);
-
-                    List<Author> authorsList = new List<Author>();
-                    List<Category> categoriesList = new List<Category>();
-
-                    foreach (var author in authors)
-                        authorsList.Add(new Author() { Id = int.Parse(author) });
-
-                    foreach (var category in categories)
-                        categoriesList.Add(new Category() { Id = int.Parse(category) });
-
-
-                    book.Authors = authorsList;
-                    book.Categories = categoriesList;
-
-                    HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
-                    string teste = JsonConvert.SerializeObject(book);
-                    string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Book/UpdateBook";
-                    using (var Response = await client.PostAsync(endpoint, content))
-                    {
-                        if (Response.StatusCode == System.Net.HttpStatusCode.OK)
-                            return await CheckoutUser(1);
-                        else
-                        {
-                            ModelState.Clear();
-                            return ErrorMessage();
-                        }
-
-                    }
+                    ModelState.Clear();
+                    return ErrorMessage();
                 }
             }
+
         }
         #endregion
 
         #region PDF
 
+        // Generate PDF and download
         [MiddlewareFilter(typeof(JsReportPipeline))]
         public async Task<IActionResult> CreatePDF(int checkoutId)
         {
-
+            // CALL TO JsReport Package
             HttpContext.JsReportFeature().Recipe(Recipe.ChromePdf)
                 .OnAfterRender((r) => HttpContext.Response.Headers["Content-Disposition"] = "attachment; filename=\"Report.pdf\"");
 
-
+            // GET DATA
             var result = await GetWithCheckoutBooksById(checkoutId);
             var resultJSON = JsonConvert.SerializeObject(result.Value);
             var checkout = JsonConvert.DeserializeObject<Checkout>(resultJSON);
 
             ViewBag.ClientName = checkout.Client.Name;
 
+            // GO TO VIEW INVOICE TO DOWNLOAD
             return View("PDF/Invoice", checkout);
-
-
-            //string[] lines = { "First line", "Second line", "Third line" };
-
-            //// Set a variable to the Documents path.
-            //string docPath =
-            //  Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-            //// Write the string array to a new file named "WriteLines.txt".
-            //using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "teste.txt")))
-            //{
-            //    foreach (string line in lines)
-            //        outputFile.WriteLine(line);
-            //}
-
-
-            //var net = new System.Net.WebClient();
-            //var data = net.DownloadData("example.pdf");
-            //var content = new System.IO.MemoryStream(data);
-            //var contentType = "APPLICATION/octet-stream";
-            //var fileName = "teste.txt";
-            //return File(content, contentType, fileName);
         }
         #endregion
     }

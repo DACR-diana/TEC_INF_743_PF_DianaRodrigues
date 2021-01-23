@@ -144,7 +144,6 @@ namespace Biblioteca.WebApp.Controllers
                     client.Registration = DateTime.Now;
 
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(client), Encoding.UTF8, "application/json");
-                    string teste = JsonConvert.SerializeObject(client);
                     string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Client/CreateClient";
                     using (var Response = await httpClient.PostAsync(endpoint, content))
                     {

@@ -61,6 +61,8 @@ namespace Biblioteca.Services
 
         public Checkout UpdateCheckout(Checkout checkoutToBeUpdated)
         {
+
+            checkoutToBeUpdated.DeliveryDate = DateTime.Now;
             return _unitOfWork.Checkouts.UpdateCheckout(checkoutToBeUpdated);
         }
     }

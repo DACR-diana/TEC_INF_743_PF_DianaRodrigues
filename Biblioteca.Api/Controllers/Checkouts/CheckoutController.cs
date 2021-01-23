@@ -93,16 +93,21 @@ namespace Biblioteca.Api.Controllers.Checkouts
             return Ok(expiredCheckoutsResource);
         }
 
-        [HttpGet("GetExpiredCheckoutsAndApplyTicketByCheckoutId/{checkoutId}")]
-        public async Task<ActionResult<CheckoutResource>> GetExpiredCheckoutsAndApplyTicketByCheckoutId(int checkoutId)
+
+        private async Task<Ticket> GetExpiredCheckoutsAndApplyTicketByCheckoutId(int checkoutId,bool isCheckoutJustUpdated)
         {
-            //Get Experid Checkout
-            var expiredCheckout = _checkoutService.GetExpiredCheckoutById(checkoutId);
-            var expiredCheckoutResource = _mapper.Map<Checkout, CheckoutResource>(expiredCheckout);
 
-            var ticketCheckout = await _ticketService.GetAllWithCheckoutsByCheckoutsId(expiredCheckoutResource.Id);
+            Checkout expiredCheckout = new Checkout();
 
-            if (ticketCheckout == null)
+
+            //Check If Checkout Is Expired
+            expiredCheckout = _checkoutService.GetExpiredCheckoutById(checkoutId);
+
+            // Check if the expired checkout has a ticket applied
+            var ticketCheckout = await _ticketService.GetAllWithCheckoutsByCheckoutsIdAndState(checkoutId, true);
+
+            // If the expired checkout has no ticket applied, then create ticket
+            if (ticketCheckout == null && expiredCheckout.Id != 0)
             {
                 SaveTicketResource saveTicketResource = new SaveTicketResource();
                 saveTicketResource.CheckoutId = expiredCheckout.Id;
@@ -112,17 +117,23 @@ namespace Biblioteca.Api.Controllers.Checkouts
                 saveTicketResource.State = true;
 
                 var saveTicket = _mapper.Map<SaveTicketResource, Ticket>(saveTicketResource);
-                var newTicket = await _ticketService.CreateTicket(saveTicket);
-
-                var newTicketResource = _mapper.Map<Ticket, TicketResource>(newTicket);
-                expiredCheckoutResource.Tickets.Add(newTicketResource);
+                ticketCheckout = await _ticketService.CreateTicket(saveTicket);
             }
             else
+                expiredCheckout.Id = checkoutId;
+
+
+            // If this parameter is true, then close the ticket
+            if (isCheckoutJustUpdated && ticketCheckout != null)
             {
-                var newTicketResource = _mapper.Map<Ticket, TicketResource>(ticketCheckout);
-                expiredCheckoutResource.Tickets.Add(newTicketResource);
+                ticketCheckout.PaymentDate = DateTime.Now;
+                ticketCheckout.State = false;
+
+                await _ticketService.UpdateTicket(ticketCheckout);
             }
-            return Ok(expiredCheckoutResource);
+            
+            return ticketCheckout;
+
         }
 
         [HttpGet("GetExpiredCheckouts")]
@@ -135,51 +146,71 @@ namespace Biblioteca.Api.Controllers.Checkouts
 
 
         [HttpPost("CreateCheckout")]
-        public async Task<ActionResult<CheckoutResource>> CreateCheckout(SaveCheckoutResource saveCheckoutResource)
+        public async Task<CheckoutResource> CreateCheckout(SaveCheckoutResource saveCheckoutResource)
         {
-            var validator = new SaveCheckoutResourceValidator();
-            var validationResult = await validator.ValidateAsync(saveCheckoutResource);
 
-            if (!validationResult.IsValid)
-                return BadRequest(validationResult.Errors);
+            try
+            {
+                var validator = new SaveCheckoutResourceValidator();
+                var validationResult = await validator.ValidateAsync(saveCheckoutResource);
 
-            var checkoutToCreate = _mapper.Map<SaveCheckoutResource, Checkout>(saveCheckoutResource);
+                if (!validationResult.IsValid)
+                    return new CheckoutResource();
 
-            var newCheckout = _checkoutService.CreateCheckout(checkoutToCreate);
+                var checkoutToCreate = _mapper.Map<SaveCheckoutResource, Checkout>(saveCheckoutResource);
 
-            return Ok(_mapper.Map<Checkout, CheckoutResource>(newCheckout));
+                var newCheckout = _checkoutService.CreateCheckout(checkoutToCreate);
+
+                return _mapper.Map<Checkout, CheckoutResource>(newCheckout);
+            }
+            catch(Exception ex)
+            {
+                return new CheckoutResource();
+            }
+            
         }
 
         [HttpPost("UpdateCheckout")]
         public async Task<IActionResult> UpdateCheckout(SaveCheckoutResource saveCheckoutResource)
         {
-            var validator = new SaveCheckoutResourceValidator();
-            var validationResult = await validator.ValidateAsync(saveCheckoutResource);
+            try
+            {
+                SaveCheckoutResourceValidator validator = new SaveCheckoutResourceValidator();
+                var validationResult = await validator.ValidateAsync(saveCheckoutResource);
 
-            if (!validationResult.IsValid)
-                return BadRequest(validationResult.Errors);
+                // Validate if object is well constructed
+                if (!validationResult.IsValid)
+                    return BadRequest(validationResult.Errors);
 
-            var checkoutToUpdate = _mapper.Map<SaveCheckoutResource, Checkout>(saveCheckoutResource);
+                // Mapping 
+                Checkout checkoutToUpdate = _mapper.Map<SaveCheckoutResource, Checkout>(saveCheckoutResource);
 
-            var newCheckout = _checkoutService.UpdateCheckout(checkoutToUpdate);
 
-            // Checkout If Checkout Is Expired And Ticketed
-            var expiredCheckout = await GetExpiredCheckoutsAndApplyTicketByCheckoutId(checkoutToUpdate.Id);
+                // Checkout If Checkout Is Expired And Ticketed
+                // Update's the Ticket as well if the second parameter is true
+                Ticket oldTicket = await GetExpiredCheckoutsAndApplyTicketByCheckoutId(checkoutToUpdate.Id, true);
 
-            //New Ticket with updated data
-            SaveTicketResource saveTicketResource = new SaveTicketResource();
-            saveTicketResource.CheckoutId = checkoutToUpdate.Id;
-            saveTicketResource.State = false;
-            saveTicketResource.PaymentDate = DateTime.Now;
+                //Update And Return New Checkout
+                Checkout newCheckout = _checkoutService.UpdateCheckout(checkoutToUpdate);
 
-            //Get Old Ticket
-            var oldTicket = await _ticketService.GetAllWithCheckoutsByCheckoutsId(checkoutToUpdate.Id);
+                // Return updated checkout
+                List<Ticket> checkoutTickets = new List<Ticket>();
 
-            //UpdateTicket
-            var newTicket = _mapper.Map<SaveTicketResource, Ticket>(saveTicketResource);
-            await _ticketService.UpdateTicket(oldTicket, newTicket);
+                // If there is no ticket, there is no need to adde to checkout object
+                if(oldTicket!=null)
+                {
+                    checkoutTickets.Add(oldTicket);
+                    newCheckout.Tickets = checkoutTickets;
+                }
+              
 
-            return Ok();
+                return Ok(newCheckout);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+
         }
 
         [HttpGet("GetCountClient")]

@@ -10,5 +10,6 @@ namespace Biblioteca.Core.Repositories
     {
         Task<Ticket> GetWithCheckoutsByIdAsync(int id);
         Task<Ticket> GetAllWithCheckoutsByCheckoutsIdAsync(int checkoutId);
+        Task<Ticket> GetAllWithCheckoutsByCheckoutsIdAndStateAsync(int checkoutId, bool state);
     }
 }

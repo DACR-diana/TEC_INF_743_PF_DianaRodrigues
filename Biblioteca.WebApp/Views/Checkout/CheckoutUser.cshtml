@@ -18,7 +18,6 @@
     {
         estado = "Multa aplicada";
     }
-  
 }
 
 <div class="row">
@@ -84,18 +83,19 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Multa:</th>
-                                @if (checkout.DeliveryDate != null)
-                                    {
-                                        <td><span class="badge bg-primary">0 <i class="fas fa-euro-sign"></i></span></td>
-                                    }
-                                    else if (checkout.ExpectedDate < DateTime.Now)
-                                    {
-                                        <td> <span class="badge bg-danger">5 <i class="fas fa-euro-sign"></i></span></td>
-                                    }
-                                    else
-                                    {
-                                        <td><span class="badge bg-success"> - - -</span></td>
-                                    }
+                                @if (checkout.DeliveryDate != null && checkout.ExpectedDate < DateTime.Now)
+                                {
+                                    <td> <span class="badge bg-danger"> @checkout.Tickets[0].Price <i class="fas fa-euro-sign"></i></span></td>
+                                }
+                                else if (checkout.DeliveryDate != null)
+                                {
+                                    <td><span class="badge bg-primary">0 <i class="fas fa-euro-sign"></i></span></td>
+
+                                }
+                                else
+                                {
+                                    <td><span class="badge bg-success"> - - -</span></td>
+                                }
                             </tr>
                         </table>
                     </div>
@@ -108,7 +108,7 @@
 
                     @if (estado != "Encerrado")
                     {
-                        <button type="button" class="btn btn-success float-right">
+                        <button type="button" onclick="UpdateCheckout()" class="btn btn-success float-right">
                             <i class="far fa-credit-card"></i> Encerrar Checkout
                         </button>
                     }
@@ -122,12 +122,61 @@
                         Html.EndForm();
                     }
 
-                    @*<button type="button" asp-controller="Checkout" asp-action="CreatePDF" class="btn btn-primary float-right" style="margin-right: 5px;">
-                        <i class="fas fa-envelope-square"></i> Download
-                    </button>*@
+                    <button type="button" id="BtnRefreshPage" onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { checkoutId = checkout.Id }))'" hidden></button>
                 </div>
             </div>
         </div>
-        <!-- /.invoice -->
-    </div><!-- /.col -->
+    </div>
 </div>
+
+@section Scripts{
+
+    <script>
+    function UpdateCheckout() {
+        swal({
+            title: "Aviso!",
+            text: "Tem a certeza que pretende encerrar o checkout ?",
+            type: "warning",
+            closeOnConfirm: false,
+            buttons: true,
+            dangerMode: true
+        }).then(function (isConfirm) {
+            if (!isConfirm) return;
+            $.ajax({
+                url: "/Checkout/SaveCheckout",
+                    type: "POST",
+                    data: {"checkoutId":@checkout.Id},
+                success: function (result) {
+
+                    if (result.status == "200") {
+
+                        swal({
+                            title: "Aviso!",
+                            text: "Checkout atualizado com sucesso",
+                            icon: "success",
+                            closeOnConfirm: false,
+                            buttons: false,
+                            dangerMode: false,
+                            timer:2000
+                        }).then(function () {
+                            $("#BtnRefreshPage").click();
+                        });
+                    }
+                    else {
+                        sweetAlert
+                            ({
+                                title: "Aviso!",
+                                text: "Dados inválidos",
+                                icon: "error"
+                            });
+                    }
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    swal("Erro!", "API EM BAIXO", "error");
+                }
+            });
+        });
+    }
+    </script>
+}

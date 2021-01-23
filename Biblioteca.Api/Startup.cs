@@ -76,7 +76,7 @@ namespace Biblioteca.Api
             services.AddTransient<ICountryService, CountryService>();
             services.AddTransient<IPaymentService, PaymentService>();
             services.AddTransient<IClientService, ClientService>();
-            services.AddTransient<ITicketService, TicketService>();
+            services.AddScoped<ITicketService, TicketService>();
 
             // DOCUMENTATION
             services.AddSwaggerGen();

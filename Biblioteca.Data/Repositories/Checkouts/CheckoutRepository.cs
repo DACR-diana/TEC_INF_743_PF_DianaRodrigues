@@ -299,7 +299,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
         public Checkout UpdateCheckout(Checkout checkout)
         {
             string[] keys = { "@Id", "@DeliveryDate" };
-            string[] values = { checkout.Id.ToString(), checkout.DeliveryDate.ToString() };
+            string[] values = { checkout.Id.ToString(),DateTime.Parse(checkout.DeliveryDate.ToString()).ToString("s") };
 
             string query = @"UPDATE Checkouts set DeliveryDate=@DeliveryDate where Id=@Id";
 

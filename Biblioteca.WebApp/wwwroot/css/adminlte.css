@@ -12423,7 +12423,7 @@ body.sidebar-collapse:not(.sidebar-mini-md):not(.sidebar-mini) .main-header::bef
 }
 
 .content-wrapper {
-    background-color: #f4f6f9;
+    background-color: #595858;
 }
 
     .content-wrapper > .content {
@@ -22167,7 +22167,7 @@ html.maximized-card {
     .select2-container--default .select2-selection--multiple .select2-selection__choice {
         background-color: #007bff;
         border-color: #006fe6;
-        color: #fff;
+        color: black !important;
         padding: 0 10px;
         margin-top: .31rem;
     }

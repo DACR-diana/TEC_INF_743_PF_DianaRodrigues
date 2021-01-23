@@ -1,75 +1,80 @@
 ﻿@{
     Layout = "_Layout";
 }
+<div class="row"  style="padding-top: 40px;">
+    <div class="col-12">
 
-<div class="card card-warning">
-    <div class="card-header">
-        <h3 class="card-title">Adicionar Livro</h3>
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">Adicionar Livro</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" asp-controller="Book" asp-action="AddBook">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <!-- text input -->
+                            <div class="form-group">
+                                <label>Título</label>
+                                <input type="text" class="form-control" name="title" placeholder="...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>ISBN</label>
+                                <input type="text" class="form-control" name="ISBN" placeholder="...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <!-- select -->
+                            <div class="form-group">
+                                <label>Selecionar um país</label>
+                                <select class="form-control" name="country">
+                                    @foreach (var country in Model.countries)
+                                    {
+                                        <option value="@country.Id">@country.Name</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <!-- Select multiple-->
+                            <div class="form-group">
+                                <label>Selecionar Categorias</label>
+                                <select multiple class="form-control" name="categories">
+                                    @foreach (var category in Model.categories)
+                                    {
+                                        <option value="@category.Id">@category.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Selecionar Autores</label>
+                                <select multiple class="form-control" name="authors">
+                                    @foreach (var author in Model.authors)
+                                    {
+                                        <option value="@author.Id">@author.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.card-body -->
+        </div>
+
     </div>
-    <!-- /.card-header -->
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data" asp-controller="Book" asp-action="AddBook">
-            <div class="row">
-                <div class="col-sm-6">
-                    <!-- text input -->
-                    <div class="form-group">
-                        <label>Título</label>
-                        <input type="text" class="form-control" name="title" placeholder="...">
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>ISBN</label>
-                        <input type="text" class="form-control" name="ISBN" placeholder="...">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <!-- select -->
-                    <div class="form-group">
-                        <label>Selecionar um país</label>
-                        <select class="form-control" name="country">
-                            @foreach (var country in Model.countries)
-                            {
-                                <option value="@country.Id">@country.Name</option>
-                            }
-
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-sm-6">
-                    <!-- Select multiple-->
-                    <div class="form-group">
-                        <label>Selecionar Categorias</label>
-                        <select multiple class="form-control" name="categories">
-                            @foreach (var category in Model.categories)
-                            {
-                                <option value="@category.Id">@category.Name</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>Selecionar Autores</label>
-                        <select multiple class="form-control" name="authors">
-                            @foreach (var author in Model.authors)
-                            {
-                                <option value="@author.Id">@author.Name</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Adicionar</button>
-            </div>
-        </form>
-    </div>
-    <!-- /.card-body -->
 </div>

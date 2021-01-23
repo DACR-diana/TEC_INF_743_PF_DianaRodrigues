@@ -69,12 +69,9 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- /.col -->
-
             </div>
 
             <div class="row">
-                <!-- /.col -->
                 <div class="col-6">
                     <p class="lead">Detalhes</p>
 
@@ -82,13 +79,14 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Multa:</th>
-                                @if (checkout.DeliveryDate != null)
+                                
+                                @if (checkout.DeliveryDate != null && checkout.ExpectedDate < DateTime.Now)
                                 {
-                                    <td>0 </td>
+                                    <td>5 Euros</td>
                                 }
                                 else if (checkout.ExpectedDate < DateTime.Now)
                                 {
-                                    <td>5</td>
+                                    <td>5 Euros</td>
                                 }
                                 else
                                 {

@@ -8,19 +8,19 @@
 
 }
 @*<div class="row" style="padding-top: 40px;">
-    <div class="col-12">
-        <div class="form-group" style="display: flex;">
-            <div class="custom-control custom-radio" style="margin: 10px;">
-                <input class="custom-control-input" onclick="FilterTable(true)" checked type="radio" id="customRadio1" name="customRadio">
-                <label for="customRadio1" class="custom-control-label">Ativos</label>
-            </div>
-            <div class="custom-control custom-radio" style="margin: 10px;">
-                <input class="custom-control-input" onclick="FilterTable(false)" type="radio" id="customRadio2" name="customRadio">
-                <label for="customRadio2" class="custom-control-label">Inativos</label>
+        <div class="col-12">
+            <div class="form-group" style="display: flex;">
+                <div class="custom-control custom-radio" style="margin: 10px;">
+                    <input class="custom-control-input" onclick="FilterTable(true)" checked type="radio" id="customRadio1" name="customRadio">
+                    <label for="customRadio1" class="custom-control-label">Ativos</label>
+                </div>
+                <div class="custom-control custom-radio" style="margin: 10px;">
+                    <input class="custom-control-input" onclick="FilterTable(false)" type="radio" id="customRadio2" name="customRadio">
+                    <label for="customRadio2" class="custom-control-label">Inativos</label>
+                </div>
             </div>
         </div>
-    </div>
-</div>*@
+    </div>*@
 <div class="row" style="padding-top: 40px;">
     <div class="col-12">
         <div class="card card-success">
@@ -47,8 +47,16 @@
                                 <td>@user.Name</td>
                                 <td>@user.NIF</td>
                                 <td>@user.Email</td>
-                                <td>@(user.State == true ? "<span class='badge badge-success'>Ativo</span>" : "<span class='badge badge-danger'>Inativo</span>" )</td>
-
+                                <td>
+                                    @if (user.State == true)
+                                    {
+                                        <span class='badge badge-success'>Ativo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class='badge badge-danger'>Inativo</span>
+                                    }
+                                </td>
                             </tr>
                         }
                     </tbody>

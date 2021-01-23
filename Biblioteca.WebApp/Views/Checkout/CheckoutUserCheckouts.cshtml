@@ -10,62 +10,60 @@
     <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 
 }
-<div class="row">
+<div class="row" style="padding-top:40px">
     <div class="col-12">
-        <div class="card card-warning" style="margin-top:20px">
-            <div class="card-header">
-                <div class="card-title">
-                    Cliente: @nome
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Main content -->
-        <div class="invoice p-3 mb-3">
+        <div class="invoice" style="background-color:unset;">
             <div class="row">
-                <div class="card-body">
-                    <table id="example2" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Id Checkout</th>
-                                <th>Data</th>
-                                <th>Data de Entrega</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var checkout in Model.Value)
-                            {
-                                <tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { checkoutId = checkout.Id }))'">
-                                    <td>@checkout.Id</td>
-                                    <td>@checkout.Date</td>
-                                    <td>@checkout.ExpectedDate</td>
+                <div class="col-12">
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <div class="card-title">
+                                Cliente: @nome
+                            </div>
+                        </div>
 
-                                    @if (checkout.DeliveryDate != null)
+                        <div class="card-body">
+                            <table id="example2" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Id Checkout</th>
+                                        <th>Data</th>
+                                        <th>Data de Entrega</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var checkout in Model.Value)
                                     {
-                                        <td><span class="badge bg-primary">Encerrado</span></td>
-                                    }
-                                    else if (checkout.ExpectedDate < DateTime.Now)
-                                    {
-                                        <td> <span class="badge bg-danger">Multa Aplicada</span></td>
-                                    }
-                                    else
-                                    {
-                                        <td><span class="badge bg-success">A decorrer</span></td>
-                                    }
+                                        <tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { checkoutId = checkout.Id }))'">
+                                            <td>@checkout.Id</td>
+                                            <td>@checkout.Date</td>
+                                            <td>@checkout.ExpectedDate</td>
 
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                            @if (checkout.DeliveryDate != null)
+                                            {
+                                                <td><span class="badge bg-primary">Encerrado</span></td>
+                                            }
+                                            else if (checkout.ExpectedDate < DateTime.Now)
+                                            {
+                                                <td> <span class="badge bg-danger">Multa Aplicada</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td><span class="badge bg-success">A decorrer</span></td>
+                                            }
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
-                <!-- /.col -->
-
             </div>
         </div>
-        <!-- /.invoice -->
-    </div><!-- /.col -->
+    </div>
 </div>
 @section Scripts {
     <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>

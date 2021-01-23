@@ -26,6 +26,11 @@ namespace Biblioteca.Services
             return await _unitOfWork.Tickets.GetAllWithCheckoutsByCheckoutsIdAsync(checkoutId);
         }
 
+        public async Task<Ticket> GetAllWithCheckoutsByCheckoutsIdAndState(int checkoutId,bool state)
+        {
+            return await _unitOfWork.Tickets.GetAllWithCheckoutsByCheckoutsIdAndStateAsync(checkoutId,state);
+        }
+
         public async Task<Ticket> CreateTicket(Ticket newTicket)
         {
             await _unitOfWork.Tickets.AddAsync(newTicket);
@@ -34,11 +39,8 @@ namespace Biblioteca.Services
         }
 
 
-        public async Task UpdateTicket(Ticket ticketToBeUpdated, Ticket ticket)
+        public async Task UpdateTicket(Ticket ticketToBeUpdated)
         {
-            ticketToBeUpdated.PaymentDate = ticket.PaymentDate;
-            ticketToBeUpdated.State = ticket.State;
-
             _unitOfWork.Tickets.UpdateAsync(ticketToBeUpdated);
             await _unitOfWork.CommitAsync();
         }

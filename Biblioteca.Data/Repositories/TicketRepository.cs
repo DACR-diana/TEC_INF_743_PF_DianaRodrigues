@@ -32,5 +32,11 @@ namespace Biblioteca.Data.Repositories
             return await ApiDbContext.Tickets
                 .SingleOrDefaultAsync(m => m.CheckoutId == checkoutId);
         }
+
+        public async Task<Ticket> GetAllWithCheckoutsByCheckoutsIdAndStateAsync(int checkoutId,bool state)
+        {
+            return await ApiDbContext.Tickets
+                .SingleOrDefaultAsync(m => m.CheckoutId == checkoutId && m.State==state);
+        }
     }
 }

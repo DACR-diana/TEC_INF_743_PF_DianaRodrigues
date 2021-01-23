@@ -10,6 +10,7 @@ namespace Biblioteca.Api.Resources
 {
     public class TicketResource
     {
+        public int Id { get; set; }
         public decimal Price { get; set; }
         public PaymentResource Payment { get; set; }
         public DateTime? PaymentDate { get; set; }

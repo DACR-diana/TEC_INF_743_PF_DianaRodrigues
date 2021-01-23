@@ -10,8 +10,10 @@ namespace Biblioteca.Core.Services
     {
         Task<IEnumerable<Ticket>> GetAllTickets();
         Task<Ticket> GetAllWithCheckoutsByCheckoutsId(int checkoutId);
+        Task<Ticket> GetAllWithCheckoutsByCheckoutsIdAndState(int checkoutId, bool state);
+
 
         Task<Ticket> CreateTicket(Ticket newTicket);
-        Task UpdateTicket(Ticket ticketToUpdate, Ticket newTicket);
+        Task UpdateTicket(Ticket ticketToUpdate);
     }
 }

@@ -25,17 +25,11 @@ namespace Biblioteca.Api.Controllers.Books
         private readonly IBookAuthorService _bookAuhtorService;
         private readonly IMapper _mapper;
 
-        // Dependency Injection Localization
-        private readonly IStringLocalizer<Localization.Controllers.Books.BookResource> _localizer;
-        private readonly IStringLocalizer<Localization.Views.SharedResource> _sharedLocalizer;
 
-        public BookController(IStringLocalizer<Localization.Controllers.Books.BookResource> localizer,
-            IStringLocalizer<Localization.Views.SharedResource> SharedLocalizer,
+        public BookController(
             IBookService bookService, IBookCategoryService bookCategoryService,
             IBookAuthorService bookAuhtorService, IMapper mapper)
         {
-            this._localizer = localizer;
-            this._sharedLocalizer = SharedLocalizer;
             this._mapper = mapper;
             this._bookService = bookService;
             this._bookCategoryService = bookCategoryService;

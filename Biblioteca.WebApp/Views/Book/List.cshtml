@@ -49,7 +49,19 @@
                                 <td>@book.ISBN</td>
                                 <td>@book.Title</td>
                                 <td>@book.Country.Name</td>
-                                <td>@(book.State == true ? "Ativo" : "Inativo" )</td>
+
+                                <td>
+
+                                    @if (book.State == true)
+                                    {
+                                        <span class='badge badge-success'>Ativo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class='badge badge-danger'>Inativo</span>
+                                    }
+
+                                </td>
 
                             </tr>
                         }

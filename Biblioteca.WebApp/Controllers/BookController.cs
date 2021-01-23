@@ -135,23 +135,20 @@ namespace Biblioteca.WebApp.Controllers
             return new JsonResult(books);
         }
 
+
+        // FUNCTION TO CONSTRUCT HTML TABLE
         public async Task<JsonResult> FilterTable(string filter)
         {
 
 
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             var books = new List<Book>();
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
+            // API CALL
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{filter}";
+            using (var Response = await _clientClientHelper.GetContent(endpoint))
             {
-                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{filter}";
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    books = JsonConvert.DeserializeObject<List<Book>>(result);
-                }
-
+                var result = await Response.Content.ReadAsStringAsync();
+                books = JsonConvert.DeserializeObject<List<Book>>(result);
             }
 
             string html = @"<thead>
@@ -169,7 +166,8 @@ namespace Biblioteca.WebApp.Controllers
             {
                 html += @"<tr onclick=location.href='/Book/Update/" + book.Id + "'><td> " + book.Id + " </td><td> " + book.ISBN + " </td><td> " + book.Title + " </td><td> " + book.Country.Name + " </td>";
 
-                html += book.State == true ? "<td>Ativo</td>" : "<td>Inativo</td>";
+
+                html += book.State == true ? "<td> <span class='badge badge-success'>Ativo</span></td>" : "<td><span class='badge badge-danger'>Inativo</span></td>";
                 html += "</tr>";
             }
 
@@ -178,22 +176,18 @@ namespace Biblioteca.WebApp.Controllers
             return new JsonResult(html);
         }
 
+        // GET BOOK BY ID
         private async Task<JsonResult> GetBook(int id)
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             Book book = new Book();
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
+            // API CALL
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetWithCategoriesAndAuthorById/{id}";
+
+            using (var Response = await _clientClientHelper.GetContent(endpoint))
             {
-                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetWithCategoriesAndAuthorById/{id}";
-
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    book = JsonConvert.DeserializeObject<Book>(result);
-                }
-
+                var result = await Response.Content.ReadAsStringAsync();
+                book = JsonConvert.DeserializeObject<Book>(result);
             }
             return new JsonResult(book);
         }
@@ -201,6 +195,7 @@ namespace Biblioteca.WebApp.Controllers
         #endregion
 
         #region Views
+        // UPDATE BOOK VIEW
         public async Task<IActionResult> Update(int id)
         {
             ViewBag.Book = await GetBook(id);
@@ -213,12 +208,16 @@ namespace Biblioteca.WebApp.Controllers
             };
             return View(categoriesAuthors);
         }
+
+        // LIST VIEW
         public async Task<IActionResult> List()
         {
             ViewBag.Books = await GetBooks();
             return View("List");
         }
 
+
+        // LOAD CATEGORIES,AUTHORS AND COUNTRIES AND GO TO ADD VIEW
         public async Task<IActionResult> Add()
         {
             AddViewModel categoriesAuthors = new AddViewModel()
@@ -234,8 +233,10 @@ namespace Biblioteca.WebApp.Controllers
 
         #region Actions
 
+        // ADD BOOK FUNCTION
         public async Task<IActionResult> AddBook()
         {
+            // REQUEST DATA FROM FORM
             var isbn = Request.Form["isbn"];
             var title = Request.Form["title"];
             var categories = Request.Form["categories"];
@@ -246,54 +247,47 @@ namespace Biblioteca.WebApp.Controllers
                 return ErrorMessage();
             else
             {
-                var httpClientHandler = new HttpClientHandler();
-                httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                // CREATE BOOK OBJECT
+                Book book = new Book();
+                book.CountryId = int.Parse(country);
+                book.ISBN = int.Parse(isbn);
+                book.Title = title;
+                book.State = true;
 
-                using (HttpClient client = new HttpClient(httpClientHandler))
+                List<Author> authorsList = new List<Author>();
+                List<Category> categoriesList = new List<Category>();
+
+                foreach (var author in authors)
+                    authorsList.Add(new Author() { Id = int.Parse(author) });
+
+                foreach (var category in categories)
+                    categoriesList.Add(new Category() { Id = int.Parse(category) });
+
+
+                book.Authors = authorsList;
+                book.Categories = categoriesList;
+
+                // API CALL
+                HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/CreateBook";
+                using (var Response = await _clientClientHelper.PostContent(endpoint, content))
                 {
-
-                    Book book = new Book();
-                    book.CountryId = int.Parse(country);
-                    book.ISBN = int.Parse(isbn);
-                    book.Title = title;
-                    book.State = true;
-
-                    List<Author> authorsList = new List<Author>();
-                    List<Category> categoriesList = new List<Category>();
-
-                    foreach (var author in authors)
-                        authorsList.Add(new Author() { Id = int.Parse(author) });
-
-                    foreach (var category in categories)
-                        categoriesList.Add(new Category() { Id = int.Parse(category) });
-
-
-                    book.Authors = authorsList;
-                    book.Categories = categoriesList;
-
-                    HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
-                    string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Book/CreateBook";
-                    using (var Response = await client.PostAsync(endpoint, content))
+                    if (Response.StatusCode == System.Net.HttpStatusCode.OK)
+                        return await List();
+                    else
                     {
-                        if (Response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            return await List();
-
-                        }
-                        else
-                        {
-                            ModelState.Clear();
-                            //ModelState.AddModelError(string.Empty, "Username or Password is Incorrect");
-                            return ErrorMessage();
-                        }
-
+                        ModelState.Clear();
+                        return ErrorMessage();
                     }
+
                 }
             }
         }
 
+        // SAVE BOOK
         public async Task<IActionResult> SaveBook()
         {
+            // REQUEST VALUES FROM FORM
             var isbn = Request.Form["isbn"];
             var title = Request.Form["title"];
             var categories = Request.Form["categories"];
@@ -301,6 +295,7 @@ namespace Biblioteca.WebApp.Controllers
             var country = Request.Form["country"];
             var state = Request.Form["customSwitch3"];
 
+            // CHECBOX WHEN ACTIVATED COMES WITH 2 VALUES, SO IF HAS 2 VALUES, THE VALUE IS TRUE AND THE CODE CAN DISCARD THE SECOND VALUE
             if (Request.Form["customSwitch3"].Count > 1)
                 state = Request.Form["customSwitch3"][0];
 
@@ -308,11 +303,6 @@ namespace Biblioteca.WebApp.Controllers
                 return ErrorMessage();
             else
             {
-                var httpClientHandler = new HttpClientHandler();
-                httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-
-                using (HttpClient client = new HttpClient(httpClientHandler))
-                {
 
                     Book book = new Book();
                     book.Id = int.Parse(HttpContext.Session.GetString("bookId"));
@@ -335,9 +325,8 @@ namespace Biblioteca.WebApp.Controllers
                     book.Categories = categoriesList;
 
                     HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
-                    string teste = JsonConvert.SerializeObject(book);
-                    string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Book/UpdateBook";
-                    using (var Response = await client.PostAsync(endpoint, content))
+                    string endpoint =$"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/UpdateBook";
+                    using (var Response = await _clientClientHelper.PostContent(endpoint, content))
                     {
                         if (Response.StatusCode == System.Net.HttpStatusCode.OK)
                             return await List();
@@ -348,7 +337,6 @@ namespace Biblioteca.WebApp.Controllers
                         }
 
                     }
-                }
             }
         }
         #endregion
