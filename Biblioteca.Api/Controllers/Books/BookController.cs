@@ -76,6 +76,14 @@ namespace Biblioteca.Api.Controllers.Books
             return Ok(bookResource);
         }
 
+        [HttpGet("GetBookByISBN/{ISBN}")]
+        public async Task<ActionResult<List<Book>>> GetBookByISBN(int ISBN)
+        {
+            var book = await _bookService.GetByISBN(ISBN);
+            var bookResource = _mapper.Map<List<Book>, List<BookResource>>(book);
+            return Ok(bookResource);
+        }
+
         [HttpPost("CreateBook")]
         public async Task<ActionResult<BookResource>> CreateBook(SaveBookResource saveBookResource)
         {

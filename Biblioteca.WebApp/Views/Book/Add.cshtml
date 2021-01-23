@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "_Layout";
 }
-<div class="row"  style="padding-top: 40px;">
+<div class="row" style="padding-top: 40px;">
     <div class="col-12">
 
         <div class="card card-warning">
@@ -45,7 +45,6 @@
 
                     <div class="row">
                         <div class="col-sm-6">
-                            <!-- Select multiple-->
                             <div class="form-group">
                                 <label>Selecionar Categorias</label>
                                 <select multiple class="form-control" name="categories">
@@ -69,7 +68,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                        <button type="button" onclick="CheckBook()" class="btn btn-primary">Adicionar</button>
+                        <button type="submit" id="BtnAddBook" class="btn btn-primary" hidden></button>
                     </div>
                 </form>
             </div>
@@ -78,3 +78,46 @@
 
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        function CheckBook() {
+
+            if ($('[name="title"]').val() == "" || $('[name="ISBN"]').val() == "" || $('[name="categories"]').val().length == 0 || $('[name="authors"]').val().length == 0) {
+                swal({
+                    title: "Aviso!",
+                    text: "Todos os campos são obrigatórios",
+                    icon: "error",
+                });
+            }
+            else {
+
+                $.ajax({
+                    type: "GET",
+                    url: "/Book/GetBookByISBN",
+                    data: { "ISBN": $('input[name="ISBN"]').val() },
+                    success: function (response) {
+                        if (response.status == "403") {
+                            swal({
+                                title: "Aviso!",
+                                text: "ISBN não está disponível!",
+                                icon: "error",
+                            });
+                        }
+                        else {
+                            $("#BtnAddBook").click();
+                        }
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+        };
+    </script>
+}

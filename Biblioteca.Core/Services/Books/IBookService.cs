@@ -12,7 +12,7 @@ namespace Biblioteca.Core.Services.Books
         Task<Book> GetWithCategoriesAndAuthorById(int id);
         Task<IEnumerable<Book>> GetAllByState(bool state);
 
-
+        Task<List<Book>> GetByISBN(int ISBN);
         Task<Book> CreateBook(Book newBook);
         Task UpdateBook(Book bookToBeUpdated, Book book);
         //Task DeleteBook(Book book);

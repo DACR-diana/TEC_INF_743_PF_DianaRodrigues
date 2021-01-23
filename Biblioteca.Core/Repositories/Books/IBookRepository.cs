@@ -10,6 +10,7 @@ namespace Biblioteca.Core.Repositories.Books
     {
         Task<IEnumerable<Book>> GetAllWithCategoriesAndAuthorAsync();
         Task<IEnumerable<Book>> GetAllByStateAsync(bool state);
+        Task<List<Book>> GetByISBNAsync(int ISBN);
         Task<Book> GetWithCategoriesAndAuthorByIdAsync(int id);
     }
 }

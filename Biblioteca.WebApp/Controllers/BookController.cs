@@ -192,6 +192,25 @@ namespace Biblioteca.WebApp.Controllers
             return new JsonResult(book);
         }
 
+        // CHECK IF BOOK BY ISBN ALREADY EXISTS
+        public async Task<IActionResult> GetBookByISBN(string ISBN)
+        {
+            List<Book> book = new List<Book>();
+
+            // API CALL
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetBookByISBN/{ISBN}";
+
+            var response = await _clientClientHelper.GetContent(endpoint);
+            var result = await response.Content.ReadAsStringAsync();
+            book = JsonConvert.DeserializeObject<List<Book>>(result);
+
+            //  IF THE OBJECT BOOK US NULL RETURN FORBIDDEN CODE
+            if (book.Count>0)
+                return Json(new { Status = "403" });
+            else
+                return Json(new { Status = "200" });
+        }
+
         #endregion
 
         #region Views
@@ -304,39 +323,39 @@ namespace Biblioteca.WebApp.Controllers
             else
             {
 
-                    Book book = new Book();
-                    book.Id = int.Parse(HttpContext.Session.GetString("bookId"));
-                    book.CountryId = int.Parse(country);
-                    book.ISBN = int.Parse(isbn);
-                    book.Title = title;
-                    book.State = bool.Parse(state);
+                Book book = new Book();
+                book.Id = int.Parse(HttpContext.Session.GetString("bookId"));
+                book.CountryId = int.Parse(country);
+                book.ISBN = int.Parse(isbn);
+                book.Title = title;
+                book.State = bool.Parse(state);
 
-                    List<Author> authorsList = new List<Author>();
-                    List<Category> categoriesList = new List<Category>();
+                List<Author> authorsList = new List<Author>();
+                List<Category> categoriesList = new List<Category>();
 
-                    foreach (var author in authors)
-                        authorsList.Add(new Author() { Id = int.Parse(author) });
+                foreach (var author in authors)
+                    authorsList.Add(new Author() { Id = int.Parse(author) });
 
-                    foreach (var category in categories)
-                        categoriesList.Add(new Category() { Id = int.Parse(category) });
+                foreach (var category in categories)
+                    categoriesList.Add(new Category() { Id = int.Parse(category) });
 
 
-                    book.Authors = authorsList;
-                    book.Categories = categoriesList;
+                book.Authors = authorsList;
+                book.Categories = categoriesList;
 
-                    HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
-                    string endpoint =$"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/UpdateBook";
-                    using (var Response = await _clientClientHelper.PostContent(endpoint, content))
+                HttpContent content = new StringContent(JsonConvert.SerializeObject(book), Encoding.UTF8, "application/json");
+                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/UpdateBook";
+                using (var Response = await _clientClientHelper.PostContent(endpoint, content))
+                {
+                    if (Response.StatusCode == System.Net.HttpStatusCode.OK)
+                        return await List();
+                    else
                     {
-                        if (Response.StatusCode == System.Net.HttpStatusCode.OK)
-                            return await List();
-                        else
-                        {
-                            ModelState.Clear();
-                            return ErrorMessage();
-                        }
-
+                        ModelState.Clear();
+                        return ErrorMessage();
                     }
+
+                }
             }
         }
         #endregion

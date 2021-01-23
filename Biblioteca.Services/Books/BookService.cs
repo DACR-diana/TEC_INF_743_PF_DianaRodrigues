@@ -36,6 +36,11 @@ namespace Biblioteca.Services.Books
             return await _unitOfWork.Books.GetAllByStateAsync(state);
         }
 
+        public async Task<List<Book>> GetByISBN(int ISBN)
+        {
+            return await _unitOfWork.Books.GetByISBNAsync(ISBN);
+        }
+
         public async Task<Book> CreateBook(Book newBook)
         {
             await _unitOfWork.Books.AddAsync(newBook);
