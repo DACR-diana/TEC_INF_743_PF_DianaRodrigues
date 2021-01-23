@@ -32,9 +32,9 @@ namespace Biblioteca.Services
             return _unitOfWork.Checkouts.GetWithCheckoutBooksByFilter(filters, filters_text);
         }
 
-        public int GetClientCount()
+        public List<int> GetDashboardInformationThroughStoredProcedure()
         {
-           return _unitOfWork.Checkouts.GetClientCount();
+           return _unitOfWork.Checkouts.GetDashboardInformationThroughStoredProcedure();
         }
 
         public List<Checkout> GetWithCheckoutBooksByClientIdAndState(int Id,bool state)

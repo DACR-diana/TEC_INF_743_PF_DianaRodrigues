@@ -93,9 +93,12 @@ namespace Biblioteca.Api.Controllers.Checkouts
             return Ok(expiredCheckoutsResource);
         }
 
-
+        // FUNCTION FOR INTERNAL USE ONLY
         private async Task<Ticket> GetExpiredCheckoutsAndApplyTicketByCheckoutId(int checkoutId,bool isCheckoutJustUpdated)
         {
+
+            // THIS FUNCTION IS NEEDED WHEN SOME CHECKOUT SUFFERS AN UPDATE OR A FUNCTION NEEDS TO KNOW IF CHECKOUT IS EXPIRED
+            // BECAUSE IF SO, A NEW TICKET NEEDS TO BE INSERTED IN THE DATABASE 
 
             Checkout expiredCheckout = new Checkout();
 
@@ -213,11 +216,10 @@ namespace Biblioteca.Api.Controllers.Checkouts
 
         }
 
-        [HttpGet("GetCountClient")]
-        public int GetCountClient()
+        [HttpGet("GetDashboardInformation")]
+        public List<int> GetDashboardInformation()
         {
-            var count = _checkoutService.GetClientCount();
-            return count;
+            return _checkoutService.GetDashboardInformationThroughStoredProcedure();
         }
 
     }

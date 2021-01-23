@@ -19,30 +19,27 @@ namespace Biblioteca.WebApp.Controllers
         private string apiBaseUrl;
         private IConfiguration _Configure;
         private readonly IHttpClientHelper _clientClientHelper;
-        //private ILocalizationHelper _localization;
 
         public DashboardController(IConfiguration configuration, IHttpClientHelper clientClientHelper)
         {
             _Configure = configuration;
             _clientClientHelper = clientClientHelper;
 
+            // API URL
             apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl");
 
         }
 
         public async Task<IActionResult> Index()
         {
-
-            //if (TempData["language"] == null)
-            //    TempData["language"] = "pt-PT";
-
-            //var content = await _localization.GetContent(TempData["language"].ToString(), "Book", apiBaseUrl);
+            // WHENEVER THE DASHBOARD IS CALLED, CHECK IF ANY CHECKOUT IS OVERDUE
             var checkouts = await GetExpiredCheckoutsAndApplyTicket();
 
-            ViewBag.ClientsCount= await GetClientsCount();
+            ViewBag.Info= await GetClientsCount();
             return View(checkouts);
         }
 
+        // FUNCTION TO SHOW ERROR MESSAGE
         public IActionResult ErrorMessage()
         {
             return Content("Ocorreu algum erro");
@@ -51,7 +48,7 @@ namespace Biblioteca.WebApp.Controllers
 
         private async Task<JsonResult> GetExpiredCheckoutsAndApplyTicket()
         {
-
+            //API CALL
             var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetExpiredCheckoutsAndApplyTicket");
             var resultJson = await result.Content.ReadAsStringAsync();
 
@@ -60,12 +57,16 @@ namespace Biblioteca.WebApp.Controllers
             return new JsonResult(checkouts);
         }
 
-        private async Task<int> GetClientsCount()
+        private async Task<List<int>> GetClientsCount()
         {
-
-            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetCountClient");
+            // API CALL
+            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetDashboardInformation");
             var resultJson = await result.Content.ReadAsStringAsync();
-            return int.Parse(resultJson);
+
+            // SPLIT THE COUNTS
+            var info = JsonConvert.DeserializeObject<List<int>>(resultJson);
+
+            return info;
         }
     }
 }

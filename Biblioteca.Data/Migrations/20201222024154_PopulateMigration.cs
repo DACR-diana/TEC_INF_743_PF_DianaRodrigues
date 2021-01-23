@@ -96,13 +96,35 @@ namespace Biblioteca.Data.Migrations
 
             #region Stored Procedure
 
-            string storedProcedure = @"CREATE PROCEDURE [GetClientsCount]
+            string storedProcedureClientCount = @"CREATE PROCEDURE [GetClientsCount]
                 AS
                 BEGIN
                     select count(Id) as 'Clients' from Clients 
                 END";
 
-            migrationBuilder.Sql(storedProcedure);
+            migrationBuilder.Sql(storedProcedureClientCount);
+
+
+            string storedProcedureRunningCheckoutsCount = @"CREATE PROCEDURE [GetRunningCheckoutsCount]
+                AS
+                BEGIN
+                     select count(Id) as 'Checkouts'
+                     from Checkouts
+                     where Checkouts.DeliveryDate is null 
+                END";
+
+            migrationBuilder.Sql(storedProcedureRunningCheckoutsCount);
+
+
+            string storedProcedureTicketsCount = @"CREATE PROCEDURE [GetRunningTicketsCount]
+                AS
+                BEGIN
+                      select count(Id) as 'Tickets'
+                     from Tickets
+                     where Tickets.State=1 
+                END";
+
+            migrationBuilder.Sql(storedProcedureTicketsCount);
 
 
 

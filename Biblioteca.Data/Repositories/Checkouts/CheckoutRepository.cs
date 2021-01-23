@@ -207,18 +207,40 @@ namespace Biblioteca.Data.Repositories.Checkouts
             return checkouts;
         }
 
-        public int GetClientCount()
+        public List<int> GetDashboardInformationThroughStoredProcedure()
         {
             string query = @"exec GetClientsCount";
 
+            // CALL STORED PROCEDURE FOR CLIENT COUNT
             DataTable dataTableClients = factory.SelectQuery(query);
 
-            int count = 0;
+            int clients = 0;
 
             if (dataTableClients.Rows.Count > 0)
-                count = int.Parse(dataTableClients.Rows[0]["clients"].ToString());
+                clients = int.Parse(dataTableClients.Rows[0]["clients"].ToString());
 
-            return count;
+            query = @"exec GetRunningCheckoutsCount";
+
+            // CALL STORED PROCEDURE FOR CHECKOUTS COUNT
+            DataTable dataTableCheckouts = factory.SelectQuery(query);
+
+            int checkouts = 0;
+
+            if (dataTableCheckouts.Rows.Count > 0)
+                checkouts = int.Parse(dataTableCheckouts.Rows[0]["checkouts"].ToString());
+
+
+            query = @"exec GetRunningTicketsCount";
+
+            // CALL STORED PROCEDURE FOR CHECKOUTS COUNT
+            DataTable dataTableTickets = factory.SelectQuery(query);
+
+            int tickets = 0;
+
+            if (dataTableTickets.Rows.Count > 0)
+                tickets = int.Parse(dataTableTickets.Rows[0]["tickets"].ToString());
+
+            return new List<int>() { clients, checkouts, tickets };
         }
 
 
@@ -299,7 +321,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
         public Checkout UpdateCheckout(Checkout checkout)
         {
             string[] keys = { "@Id", "@DeliveryDate" };
-            string[] values = { checkout.Id.ToString(),DateTime.Parse(checkout.DeliveryDate.ToString()).ToString("s") };
+            string[] values = { checkout.Id.ToString(), DateTime.Parse(checkout.DeliveryDate.ToString()).ToString("s") };
 
             string query = @"UPDATE Checkouts set DeliveryDate=@DeliveryDate where Id=@Id";
 
