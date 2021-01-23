@@ -49,7 +49,8 @@
                     </div>
 
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                        <button type="button" onclick="CheckCheckout();" class="btn btn-primary">Adicionar</button>
+                        <button type="submit" id="BtnAddCheckout" asp-controller="Checkout" asp-action="CreateCheckout" hidden></button>
                     </div>
                 </form>
             </div>
@@ -67,6 +68,21 @@
             $('.select2-purple').select2()
         });
 
+        function CheckCheckout() {
+
+
+            if ($('[name="books"]').val().length > 0) {
+                $("#BtnAddCheckout").click();
+            }
+            else {
+                swal({
+                    title: "Aviso!",
+                    text: "Tem que adicionar pelo menos um livro!",
+                    icon: "error",
+                });
+            }
+
+        };
     </script>
 
 }
