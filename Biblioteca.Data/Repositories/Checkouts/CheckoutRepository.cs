@@ -131,7 +131,7 @@ namespace Biblioteca.Data.Repositories.Checkouts
                                inner join Books on Books.Id = CheckoutBooks.BookId
                                  Where";
 
-            query += state == true ? " Checkouts.DeliveryDate is null" : "Checkouts.DeliveryDate is not null";
+            query += state == true ? " Checkouts.DeliveryDate is null" : " Checkouts.DeliveryDate is not null";
 
             for (int i = 0; i < filters.Length; i++)
                 query += $" AND {filters[i]}={keys.ToArray()[i]}";

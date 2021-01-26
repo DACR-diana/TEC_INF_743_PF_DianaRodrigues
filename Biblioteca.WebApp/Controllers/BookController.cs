@@ -55,83 +55,61 @@ namespace Biblioteca.WebApp.Controllers
 
         #region GET
 
+        // GET COUNTRIES
         private async Task<List<Country>> GetCountries()
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-
             List<Country> countries = new List<Country>();
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
-            {
+            // API CALL
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Country/GetAllCountries";
 
-                string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Country/GetAllCountries";
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    countries = JsonConvert.DeserializeObject<List<Country>>(result);
-                }
-            }
+            var Response = await _clientClientHelper.GetContent(endpoint);
+            var result = await Response.Content.ReadAsStringAsync();
+
+            // RESPONSE
+            countries = JsonConvert.DeserializeObject<List<Country>>(result);
             return countries;
         }
 
+        // GET AUTHORS
         private async Task<List<Author>> GetAuthors()
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-
             List<Author> authors = new List<Author>();
-
-            using (HttpClient client = new HttpClient(httpClientHandler))
-            {
-
-                string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Author/GetAllAuthors";
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    authors = JsonConvert.DeserializeObject<List<Author>>(result);
-                }
-            }
+            // API CALL
+            string endpoint = apiBaseUrl + $"{ HttpContext.Session.GetString("language")}/api/Author/GetAllAuthors";
+            var Response = await _clientClientHelper.GetContent(endpoint);
+            var result = await Response.Content.ReadAsStringAsync();
+            // RESPONSE
+            authors = JsonConvert.DeserializeObject<List<Author>>(result);
             return authors;
         }
 
+        // GET CATEGORIES
         private async Task<List<Category>> GetCategories()
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-
             List<Category> categories = new List<Category>();
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
-            {
+            // API CALL
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Category/GetAllCategories";
+            var Response = await _clientClientHelper.GetContent(endpoint);
+            var result = await Response.Content.ReadAsStringAsync();
 
-                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Category/GetAllCategories";
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    categories = JsonConvert.DeserializeObject<List<Category>>(result);
-                }
-            }
+            // RESPONSE
+            categories = JsonConvert.DeserializeObject<List<Category>>(result);
             return categories;
         }
 
+        // GET BOOKS
         private async Task<JsonResult> GetBooks()
         {
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             var books = new List<Book>();
 
-            using (HttpClient client = new HttpClient(httpClientHandler))
-            {
-                string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{true}";
-                //string endpoint = apiBaseUrl + $"Book/GetAllWithCategoriesAndAuthor";
-                using (var Response = await client.GetAsync(endpoint))
-                {
-                    var result = await Response.Content.ReadAsStringAsync();
-                    books = JsonConvert.DeserializeObject<List<Book>>(result);
-                }
-
-            }
+            string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{true}";
+            // API CALL
+            var Response = await _clientClientHelper.GetContent(endpoint);
+            var result = await Response.Content.ReadAsStringAsync();
+            // RESPONSE
+            books = JsonConvert.DeserializeObject<List<Book>>(result);
             return new JsonResult(books);
         }
 
@@ -145,11 +123,9 @@ namespace Biblioteca.WebApp.Controllers
 
             // API CALL
             string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Book/GetAllByState/{filter}";
-            using (var Response = await _clientClientHelper.GetContent(endpoint))
-            {
-                var result = await Response.Content.ReadAsStringAsync();
-                books = JsonConvert.DeserializeObject<List<Book>>(result);
-            }
+            var Response = await _clientClientHelper.GetContent(endpoint);
+            var result = await Response.Content.ReadAsStringAsync();
+            books = JsonConvert.DeserializeObject<List<Book>>(result);
 
             string html = @"<thead>
                         <tr>
@@ -205,7 +181,7 @@ namespace Biblioteca.WebApp.Controllers
             book = JsonConvert.DeserializeObject<List<Book>>(result);
 
             //  IF THE OBJECT BOOK US NULL RETURN FORBIDDEN CODE
-            if (book.Count>0)
+            if (book.Count > 0)
                 return Json(new { Status = "403" });
             else
                 return Json(new { Status = "200" });

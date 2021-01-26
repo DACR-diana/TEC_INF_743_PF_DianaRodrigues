@@ -35,31 +35,44 @@ namespace Biblioteca.Api.Controllers.Checkouts
         [HttpGet("GetWithCheckoutBooksById/{id}")]
         public async Task<ActionResult<CheckoutResource>> GetWithCheckoutBooksById(int id)
         {
+            // CAL CHECKOUT SERVICE
             var checkouts = _checkoutService.GetWithCheckoutBooksById(id);
 
+            //MAPPING
             var checkoutsResource = _mapper.Map<Checkout, CheckoutResource>(checkouts);
 
+            // GET TICKETS OF THE CHECKOUT
             var ticketCheckout = await _ticketService.GetAllWithCheckoutsByCheckoutsId(checkoutsResource.Id);
-
+            // MAPPING
             var newTicketResource = _mapper.Map<Ticket, TicketResource>(ticketCheckout);
+
+            
             checkoutsResource.Tickets.Add(newTicketResource);
 
+            // RESPONSE
             return Ok(checkoutsResource);
         }
 
         [HttpGet("GetWithCheckoutBooksByClientId/{clientId}")]
         public ActionResult<CheckoutResource> GetWithCheckoutBooksByClientId(int clientId)
         {
+            // CAL CHECKOUT SERVICE
             var checkouts = _checkoutService.GetWithCheckoutBooksByClientId(clientId);
+            //MAPPING
             var checkoutsResource = _mapper.Map<List<Checkout>, List<CheckoutResource>>(checkouts);
+
+            // RESPONSE
             return Ok(checkoutsResource);
         }
 
         [HttpGet("GetWithCheckoutBooksByClientIdAndState/{clientId}/{state}")]
         public ActionResult<CheckoutResource> GetWithCheckoutBooksByClientIdAndState(int clientId, bool state)
         {
+            // CALL CHECKOUT SERVICE
             var checkouts = _checkoutService.GetWithCheckoutBooksByClientIdAndState(clientId, state);
+            //MAPPING
             var checkoutsResource = _mapper.Map<List<Checkout>, List<CheckoutResource>>(checkouts);
+            // RESPONSE
             return Ok(checkoutsResource);
         }
 
@@ -157,13 +170,18 @@ namespace Biblioteca.Api.Controllers.Checkouts
                 var validator = new SaveCheckoutResourceValidator();
                 var validationResult = await validator.ValidateAsync(saveCheckoutResource);
 
+                // CHECK IF INFO IS VALID
                 if (!validationResult.IsValid)
                     return new CheckoutResource();
 
+                // MAPPING
                 var checkoutToCreate = _mapper.Map<SaveCheckoutResource, Checkout>(saveCheckoutResource);
 
+
+                // CALL CHECKOUT SERVICE TO CREATE CHECKOUT
                 var newCheckout = _checkoutService.CreateCheckout(checkoutToCreate);
 
+                // MAPPING + RESPONSE
                 return _mapper.Map<Checkout, CheckoutResource>(newCheckout);
             }
             catch(Exception ex)
@@ -219,6 +237,7 @@ namespace Biblioteca.Api.Controllers.Checkouts
         [HttpGet("GetDashboardInformation")]
         public List<int> GetDashboardInformation()
         {
+            // GET DASHBOARD INFO
             return _checkoutService.GetDashboardInformationThroughStoredProcedure();
         }
 

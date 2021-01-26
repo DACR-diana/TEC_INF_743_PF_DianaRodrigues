@@ -4,131 +4,136 @@
     var authorsIds = new List<int>();
 }
 
-<div class="card card-warning">
-    <div class="card-header">
-        <h3 class="card-title">Editar livro @ViewBag.Book.Value.Title</h3>
-    </div>
-    <!-- /.card-header -->
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data" asp-controller="Book" asp-action="SaveBook">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>Título</label>
-                        <input type="text" value="@ViewBag.Book.Value.Title" class="form-control" name="title" placeholder="...">
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>ISBN</label>
-                        <input type="text" value="@ViewBag.Book.Value.ISBN" class="form-control" name="ISBN" placeholder="...">
-                    </div>
-                </div>
-               
+<div class="row" style="padding-top:40px">
+    <div class="col-12">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">Editar livro @ViewBag.Book.Value.Title</h3>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <!-- select -->
-                    <div class="form-group">
-                        <label>Selecionar um país</label>
-                        <select class="form-control" name="country">
-                            @foreach (var country in Model.countries)
-                            {
-                                if (country.Id == @ViewBag.Book.Value.CountryId)
-                                {
-                                    <option selected value="@country.Id">@country.Name</option>
-                                }
-                                else
-                                {
-                                    <option value="@country.Id">@country.Name</option>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" asp-controller="Book" asp-action="SaveBook">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Título</label>
+                                <input type="text" value="@ViewBag.Book.Value.Title" class="form-control" name="title" placeholder="...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>ISBN</label>
+                                <input type="text" value="@ViewBag.Book.Value.ISBN" class="form-control" name="ISBN" placeholder="...">
+                            </div>
+                        </div>
 
-                                }
-                            }
-
-                        </select>
                     </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-sm-6">
-                    <!-- Select multiple-->
-                    <div class="form-group">
-                        <label>Selecionar Categorias</label>
-                        <select multiple class="form-control" name="categories">
-                            @foreach (var category in Model.categories)
-                            {
-
-                                foreach (var bookCategory in @ViewBag.Book.Value.BookCategories)
-                                {
-                                    if (bookCategory.CategoryId == category.Id)
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <!-- select -->
+                            <div class="form-group">
+                                <label>Selecionar um país</label>
+                                <select class="form-control" name="country">
+                                    @foreach (var country in Model.countries)
                                     {
-                                        <option selected value="@category.Id">@category.Name</option>
-                                        categoriesIds.Add(category.Id);
+                                        if (country.Id == @ViewBag.Book.Value.CountryId)
+                                        {
+                                            <option selected value="@country.Id">@country.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@country.Id">@country.Name</option>
+
+                                        }
                                     }
 
-                                }
-                                if (!categoriesIds.Contains(category.Id))
-                                {
-                                    <option value="@category.Id">@category.Name</option>
-                                }
-
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>Selecionar Autores</label>
-                        <select multiple class="form-control" name="authors">
-                            @foreach (var author in Model.authors)
-                            {
-
-                                foreach (var bookAuthor in @ViewBag.Book.Value.BookAuthors)
-                                {
-                                    if (bookAuthor.AuthorId == author.Id)
-                                    {
-                                        <option selected value="@author.Id">@author.Name</option>
-                                        authorsIds.Add(@author.Id);
-                                    }
-
-                                }
-
-                                if (!authorsIds.Contains(author.Id))
-                                {
-                                    <option value="@author.Id">@author.Name</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                            @if (ViewBag.Book.Value.State)
-                            {
-                                @Html.CheckBox("customSwitch3", true)
-                                @*<input type="checkbox" checked onclick="@ViewData["State"]=true" class="custom-control-input" id="customSwitch3">*@
-
-                            }
-                            else
-                            {
-                                @Html.CheckBox("customSwitch3", false)
-                                @*<input type="checkbox" onclick="@ViewData["State"]=false" class="custom-control-input" id="customSwitch3">*@
-
-                            }
-                            <label class="custom-control-label" for="customSwitch3">Ativar/Inativar</label>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <!-- Select multiple-->
+                            <div class="form-group">
+                                <label>Selecionar Categorias</label>
+                                <select multiple class="form-control" name="categories">
+                                    @foreach (var category in Model.categories)
+                                    {
+
+                                        foreach (var bookCategory in @ViewBag.Book.Value.BookCategories)
+                                        {
+                                            if (bookCategory.CategoryId == category.Id)
+                                            {
+                                                <option selected value="@category.Id">@category.Name</option>
+                                                categoriesIds.Add(category.Id);
+                                            }
+
+                                        }
+                                        if (!categoriesIds.Contains(category.Id))
+                                        {
+                                            <option value="@category.Id">@category.Name</option>
+                                        }
+
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Selecionar Autores</label>
+                                <select multiple class="form-control" name="authors">
+                                    @foreach (var author in Model.authors)
+                                    {
+
+                                        foreach (var bookAuthor in @ViewBag.Book.Value.BookAuthors)
+                                        {
+                                            if (bookAuthor.AuthorId == author.Id)
+                                            {
+                                                <option selected value="@author.Id">@author.Name</option>
+                                                authorsIds.Add(@author.Id);
+                                            }
+
+                                        }
+
+                                        if (!authorsIds.Contains(author.Id))
+                                        {
+                                            <option value="@author.Id">@author.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                    @if (ViewBag.Book.Value.State)
+                                    {
+                                        @Html.CheckBox("customSwitch3", true)
+                                        @*<input type="checkbox" checked onclick="@ViewData["State"]=true" class="custom-control-input" id="customSwitch3">*@
+
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBox("customSwitch3", false)
+                                        @*<input type="checkbox" onclick="@ViewData["State"]=false" class="custom-control-input" id="customSwitch3">*@
+
+                                    }
+                                    <label class="custom-control-label" for="customSwitch3">Ativar/Inativar</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
             </div>
-            <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-        </form>
+        </div>
+
     </div>
 </div>
 

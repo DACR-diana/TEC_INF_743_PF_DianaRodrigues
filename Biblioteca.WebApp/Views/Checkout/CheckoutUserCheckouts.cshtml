@@ -10,56 +10,76 @@
     <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 
 }
-<div class="row" style="padding-top:40px">
+<div class="row" style="padding-top: 40px;">
     <div class="col-12">
-        <div class="invoice" style="background-color:unset;">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card card-warning">
-                        <div class="card-header">
-                            <div class="card-title">
-                                Cliente: @nome
-                            </div>
-                        </div>
 
-                        <div class="card-body">
-                            <table id="example2" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Id Checkout</th>
-                                        <th>Data</th>
-                                        <th>Data de Entrega</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var checkout in Model.Value)
-                                    {
-                                        <tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { checkoutId = checkout.Id }))'">
-                                            <td>@checkout.Id</td>
-                                            <td>@checkout.Date</td>
-                                            <td>@checkout.ExpectedDate</td>
+        <div class="callout callout-info">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">FILTRO</h3>
+                </div>
+            </div>
 
-                                            @if (checkout.DeliveryDate != null)
-                                            {
-                                                <td><span class="badge bg-primary">Encerrado</span></td>
-                                            }
-                                            else if (checkout.ExpectedDate < DateTime.Now)
-                                            {
-                                                <td> <span class="badge bg-danger">Multa Aplicada</span></td>
-                                            }
-                                            else
-                                            {
-                                                <td><span class="badge bg-success">A decorrer</span></td>
-                                            }
+            <div class="form-group" style="display: flex;">
+                <div class="custom-control custom-radio" style="margin: 10px;">
+                    <input class="custom-control-input" onclick="FilterTable(true)" checked type="radio" id="customRadio1" name="customRadio">
+                    <label for="customRadio1" class="custom-control-label">Ativos</label>
+                </div>
+                <div class="custom-control custom-radio" style="margin: 10px;">
+                    <input class="custom-control-input" onclick="FilterTable(false)" type="radio" id="customRadio2" name="customRadio">
+                    <label for="customRadio2" class="custom-control-label">Inativos</label>
+                </div>
+            </div>
+        </div>
 
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="invoice" style="background-color:unset;border:none">
+            <div class="card card-navy">
+                <div class="card-header">
+                    <div class="card-title">
+                        Cliente: @nome
                     </div>
+                </div>
 
+                <div class="card-body">
+                    <table id="example2" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Id Checkout</th>
+                                <th>Data</th>
+                                <th>Data de Entrega</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var checkout in Model.Value)
+                            {
+                                <tr onclick="location.href='@(Url.Action("CheckoutUser", "Checkout", new { checkoutId = checkout.Id }))'">
+                                    <td>@checkout.Id</td>
+                                    <td>@checkout.Date</td>
+                                    <td>@checkout.ExpectedDate</td>
+
+                                    @if (checkout.DeliveryDate != null)
+                                    {
+                                        <td><span class="badge bg-primary">Encerrado</span></td>
+                                    }
+                                    else if (checkout.ExpectedDate < DateTime.Now)
+                                    {
+                                        <td> <span class="badge bg-danger">Multa Aplicada</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><span class="badge bg-success">A decorrer</span></td>
+                                    }
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -75,12 +95,12 @@
             $('#example2').DataTable();
         });
 
-        @*function FilterTable(filter) {
+        function FilterTable(filter) {
             $('#example2').dataTable().fnDestroy();
             $.ajax({
                 type: "POST",
                 url: "@Url.Action("FilterTable")",
-                data: { filter: filter },
+                data: { clientID:@ViewBag.ClientId,filter: filter },
                 dataType: "json",
                 success: function (data) {
                     $('#example2').html("");
@@ -91,7 +111,7 @@
                     console.log(error);
                 }
             });
-        }*@
+        }
 
     </script>
 }

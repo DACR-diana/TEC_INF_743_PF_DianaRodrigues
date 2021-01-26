@@ -80,11 +80,13 @@ namespace Biblioteca.WebApp.Controllers
         {
             clientId = clientId == 0 ? int.Parse(HttpContext.Session.GetString("clientId")) : clientId;
 
-            var result = await GetCheckoutsWithUserByClientId(clientId);
+            //var result = await GetCheckoutsWithUserByClientId(clientId);
+            var result = await GetCheckoutsWithUserByClientIdByState(clientId, true);
 
             var resultJSON = JsonConvert.SerializeObject(result.Value);
             var checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
 
+            ViewBag.ClientId = clientId;
             ViewBag.ClientName = checkouts.Count == 0 ? HttpContext.Session.GetString("clientName") : checkouts[0].Client.Name;
 
             return View("CheckoutUserCheckouts", result);
@@ -142,11 +144,9 @@ namespace Biblioteca.WebApp.Controllers
             var checkouts = new List<Checkout>();
 
             string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetWithCheckoutBooksByClientId/{clientId}";
-            using (var Response = await _clientClientHelper.GetContent(endpoint))
-            {
-                var result = await Response.Content.ReadAsStringAsync();
-                checkouts = JsonConvert.DeserializeObject<List<Checkout>>(result);
-            }
+            var Response = await _clientClientHelper.GetContent(endpoint);
+            var result = await Response.Content.ReadAsStringAsync();
+            checkouts = JsonConvert.DeserializeObject<List<Checkout>>(result);
             return new JsonResult(checkouts);
         }
 
@@ -156,13 +156,53 @@ namespace Biblioteca.WebApp.Controllers
             var checkouts = new List<Checkout>();
 
             string endpoint = $"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Checkout/GetWithCheckoutBooksByClientIdAndState/{clientId}/{state}";
-            using (var Response = await _clientClientHelper.GetContent(endpoint))
-            {
-                var result = await Response.Content.ReadAsStringAsync();
-                checkouts = JsonConvert.DeserializeObject<List<Checkout>>(result);
-            }
+            var Response = await _clientClientHelper.GetContent(endpoint);
+            var result = await Response.Content.ReadAsStringAsync();
+            checkouts = JsonConvert.DeserializeObject<List<Checkout>>(result);
             return new JsonResult(checkouts);
         }
+
+        // FUNCTION TO CONSTRUCT HTML TABLE
+        public async Task<JsonResult> FilterTable(int clientID, bool filter)
+        {
+
+            var checkouts = new List<Checkout>();
+
+            var result = await GetCheckoutsWithUserByClientIdByState(clientID, filter);
+
+            var resultJSON = JsonConvert.SerializeObject(result.Value);
+            checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
+
+            string html = @"<thead>
+                        <tr>
+                         <th>Id Checkout</th>
+                         <th>Data</th>
+                         <th>Data de Entrega</th>
+                         <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+
+            foreach (var checkout in checkouts)
+            {
+                html += @"<tr onclick=location.href='@(Url.Action('CheckoutUser', Checkout', new { checkoutId = " + checkout.Id + " }))'><td> " + checkout.Id + " </td><td> " + checkout.Date + " </td><td> " + checkout.ExpectedDate + " </td>";
+
+
+                if (checkout.DeliveryDate != null)
+                    html += " <td><span class='badge bg-primary'>Encerrado</span></td>";
+                else if (checkout.ExpectedDate < DateTime.Now)
+                    html += "<td> <span class='badge bg-danger'>Multa Aplicada</span></td>";
+                else
+                    html += "<td><span class='badge bg-success'>A decorrer</span></td>";
+
+                html += "</tr>";
+            }
+
+            html += @"</tbody>";
+
+            return new JsonResult(html);
+        }
+
 
         #endregion
 
