@@ -1,56 +1,60 @@
 ﻿@{
     Layout = "_Layout";
 }
-
-<div class="card card-warning" style="margin-top: 40px;">
-    <div class="card-header">
-        <h3 class="card-title">Editar cliente @ViewBag.User.Value.Name</h3>
-    </div>
-    <!-- /.card-header -->
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data" asp-controller="User" asp-action="SaveClient">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>Nome</label>
-                        <input type="text" value="@ViewBag.User.Value.Name" class="form-control" name="name" placeholder="...">
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>NIF</label>
-                        <input type="text" value="@ViewBag.User.Value.NIF" class="form-control" name="NIF" placeholder="...">
-                    </div>
-                </div>
+<div class="row" style="padding-top: 40px;">
+    <div class="col-sm-12">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">Editar cliente @ViewBag.User.Value.Name</h3>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                            @if (ViewBag.User.Value.State)
-                            {
-                                @Html.CheckBox("customSwitch3", true)
-
-                            }
-                            else
-                            {
-                                @Html.CheckBox("customSwitch3", false)
-
-                            }
-                            <label class="custom-control-label" for="customSwitch3">Ativar/Inativar</label>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" asp-controller="User" asp-action="SaveClient">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Nome</label>
+                                <input type="text" value="@ViewBag.User.Value.Name" class="form-control" name="name" placeholder="...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>NIF</label>
+                                <input type="text" value="@ViewBag.User.Value.NIF" class="form-control" name="NIF" placeholder="...">
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                    @if (ViewBag.User.Value.State)
+                                    {
+                                        @Html.CheckBox("customSwitch3", true)
+
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBox("customSwitch3", false)
+
+                                    }
+                                    <label class="custom-control-label" for="customSwitch3">Ativar/Inativar</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" onclick="CheckCheckout()" class="btn btn-success">Criar Checkout</button>
+                        <button type="submit" asp-controller="Checkout" asp-action="CheckoutUserCheckouts" class="btn btn-dark">Ver Checkouts</button>
+                        <button type="submit" id="BtnCreateCheckout" asp-controller="Checkout" asp-action="Add" hidden></button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
             </div>
-            <div class="card-footer">
-                <button type="button" onclick="CheckCheckout()" class="btn btn-success">Criar Checkout</button>
-                <button type="submit" asp-controller="Checkout" asp-action="CheckoutUserCheckouts" class="btn btn-dark">Ver Checkouts</button>
-                <button type="submit" id="BtnCreateCheckout" asp-controller="Checkout" asp-action="Add" hidden></button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
+
 
 @section Scripts{
 

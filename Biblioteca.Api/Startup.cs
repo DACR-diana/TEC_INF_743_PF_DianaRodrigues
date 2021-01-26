@@ -61,6 +61,7 @@ namespace Biblioteca.Api
             });
             services.AddControllers();
 
+
             // DBCONTEXT
             services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default"), x => x.MigrationsAssembly("Biblioteca.Data")));
 

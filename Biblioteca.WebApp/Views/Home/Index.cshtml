@@ -20,9 +20,9 @@
 
 
 </head>
-<body class="hold-transition login-page" >
+<body class="hold-transition login-page">
     <div class="login-box">
-       
+
         <!-- /.login-logo -->
         <div class="card">
             <div class="card-body login-card-body">
@@ -49,7 +49,8 @@
                     <div class="row">
                         <!-- /.col -->
                         <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                            <button type="button" onclick="CheckLogin()" class="btn btn-primary btn-block">Entrar</button>
+                            <button type="submit" asp-controller="Home" asp-action="GoToDashboard" id="BtnSubmitEmployee" hidden></button>
                         </div>
                         <!-- /.col -->
                     </div>
@@ -66,5 +67,51 @@
     <!-- AdminLTE App -->
     <script src="~/js/adminlte.min.js"></script>
 
+    <!-- SWEET ALERT -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+    <script>
+        function CheckLogin() {
+
+            if ($('[name="email"]').val() == "" || $('[name="employeeNumber"]').val() == "") {
+                swal({
+                    title: "Aviso!",
+                    text: "Todos os campos são obrigatórios!",
+                    icon: "error",
+                });
+            }
+            else {
+                $.ajax({
+                    type: "GET",
+                    url: "/Home/Login",
+                    data: { "email": $('[name="email"]').val(), "num": $('[name="employeeNumber"]').val() },
+                    success: function (response) {
+                        if (response.status == "403") {
+                            swal({
+                                title: "Aviso!",
+                                text: "Informações não estão válidas",
+                                icon: "error",
+                            });
+                        }
+                        else {
+                            $("#BtnSubmitEmployee").click();
+                        }
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+
+            }
+
+
+        };
+    </script>
 </body>
 </html>
+

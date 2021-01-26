@@ -17,6 +17,7 @@ namespace Biblioteca.WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        // Dependency Injection
         private string apiBaseUrl;
         private IConfiguration _Configure;
         private readonly IHttpClientHelper _clientClientHelper;
@@ -25,7 +26,7 @@ namespace Biblioteca.WebApp.Controllers
         {
             _Configure = configuration;
             _clientClientHelper = clientClientHelper;
-            apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl");
+            apiBaseUrl = _Configure.GetValue<string>("WebAPIBaseUrl"); // GET'S THE API URL FROM FILE appsettings.json
         }
 
         public IActionResult Index()
@@ -33,34 +34,37 @@ namespace Biblioteca.WebApp.Controllers
             return View();
         }
 
-        [HttpGet]
 
-        public async Task<IActionResult> Login()
+        // FUNCTION TO HANDLE LOGIN
+        public async Task<IActionResult> Login(string email,string num)
         {
-            var employeeNumber = Request.Query["employeeNumber"];
-            var email = Request.Query["email"];
-
             Employee employee = new Employee();
             employee.Email = email;
-            employee.EmployeeNumber = employeeNumber;
+            employee.EmployeeNumber = num;
 
             // GET THIS WITH COOKIES LATER
             HttpContext.Session.SetString("language", "pt-PT");
 
-            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Employee/GetByEmail/{email}/{employeeNumber}");
+            var result = await _clientClientHelper.GetContent($"{apiBaseUrl}{ HttpContext.Session.GetString("language")}/api/Employee/GetByEmail/{email}/{num}");
 
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                TempData["Employee"] = JsonConvert.SerializeObject(employeeNumber);
-                return RedirectToRoute(new { Controller = "Dashboard", Action = "Index" });
+                // SAVE EMPLOYEE NUMBER AND RETURN SUCESS CODE
+                TempData["Employee"] = JsonConvert.SerializeObject(num);
+                return Json(new { Status = "200" });
             }
             else
             {
+                // RETURN ERROR CODE
                 ModelState.Clear();
-                ModelState.AddModelError(string.Empty, "Username or Password is Incorrect");
-                return NotFound();
-
+                return Json(new { Status = "403" });
             }
+        }
+
+        // GO TO DASHBOARD FUNCTION
+        public IActionResult GoToDashboard()
+        {
+            return RedirectToRoute(new { Controller = "Dashboard", Action = "Index" });
         }
     }
 }

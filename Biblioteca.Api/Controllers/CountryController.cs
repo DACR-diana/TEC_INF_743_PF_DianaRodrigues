@@ -28,8 +28,13 @@ namespace Biblioteca.Api.Controllers
         [HttpGet("GetAllCountries")]
         public async Task<ActionResult<IEnumerable<CountryResource>>> GetAllCountries()
         {
+
+            // CONNECT TO COUNTRY SERVICE
             var countries = await _countryService.GetAllCountries();
+
+            // MAPPING
             var countriesResource = _mapper.Map<IEnumerable<Country>, IEnumerable<CountryResource>>(countries);
+            //RETURN RESPONSE
             return Ok(countriesResource);
         }
     }
