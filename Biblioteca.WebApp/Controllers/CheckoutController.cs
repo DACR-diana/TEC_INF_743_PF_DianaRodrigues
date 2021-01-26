@@ -87,7 +87,7 @@ namespace Biblioteca.WebApp.Controllers
             var checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
 
             ViewBag.ClientId = clientId;
-            ViewBag.ClientName = checkouts.Count == 0 ? HttpContext.Session.GetString("clientName") : checkouts[0].Client.Name;
+            ViewBag.ClientName = HttpContext.Session.GetString("clientName");
 
             return View("CheckoutUserCheckouts", result);
         }
@@ -168,11 +168,14 @@ namespace Biblioteca.WebApp.Controllers
 
             var checkouts = new List<Checkout>();
 
+            // GET DATA
             var result = await GetCheckoutsWithUserByClientIdByState(clientID, filter);
 
+            // CONVERT RESPONSE TO OBJECT
             var resultJSON = JsonConvert.SerializeObject(result.Value);
             checkouts = JsonConvert.DeserializeObject<List<Checkout>>(resultJSON);
 
+            // HTML FOR TABLE
             string html = @"<thead>
                         <tr>
                          <th>Id Checkout</th>
@@ -185,7 +188,7 @@ namespace Biblioteca.WebApp.Controllers
 
             foreach (var checkout in checkouts)
             {
-                html += @"<tr onclick=location.href='@(Url.Action('CheckoutUser', Checkout', new { checkoutId = " + checkout.Id + " }))'><td> " + checkout.Id + " </td><td> " + checkout.Date + " </td><td> " + checkout.ExpectedDate + " </td>";
+                html += @"<tr onclick=location.href='/Checkout/CheckoutUser?checkoutId="+ checkout.Id +"'><td> " + checkout.Id + " </td><td> " + checkout.Date + " </td><td> " + checkout.ExpectedDate + " </td>";
 
 
                 if (checkout.DeliveryDate != null)
