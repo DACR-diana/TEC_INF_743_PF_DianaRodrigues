@@ -8,9 +8,9 @@
 
 }
 <div class="row" style="padding-top: 40px;">
-    <div class="col-12" >
+    <div class="col-12">
         <div class="invoice" style="background-color:unset;border:none">
-            <div class="row" >
+            <div class="row">
                 <div class="col-12">
                     <div class="card card-success">
                         <div class="card-header">
@@ -36,10 +36,21 @@
                                             <td>@user.Name</td>
                                             <td>@user.NIF</td>
                                             <td>@user.Email</td>
-                                            <td>@(user.State == true ? "Ativo" : "Inativo" )</td>
+                                            <td>
+                                                @if (user.State == true)
+                                                {
 
-                                        </tr>
-                                    }
+                                                    <span class='badge bg-success'>Ativo</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class='badge bg-danger'>Inativo</span>
+                                                }
+                                        </td>
+
+
+                                    </tr>
+                                }
                                 </tbody>
                             </table>
                         </div>

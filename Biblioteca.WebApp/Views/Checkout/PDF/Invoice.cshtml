@@ -80,11 +80,11 @@
                             <tr>
                                 <th style="width:50%">Multa:</th>
                                 
-                                @if (checkout.DeliveryDate != null && checkout.ExpectedDate < DateTime.Now)
+                                @if ((checkout.DeliveryDate == null || checkout.DeliveryDate != null) && checkout.ExpectedDate < DateTime.Now)
                                 {
                                     <td>5 Euros</td>
                                 }
-                                else if (checkout.ExpectedDate < DateTime.Now)
+                                else if (checkout.DeliveryDate != null)
                                 {
                                     <td>5 Euros</td>
                                 }
